@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Vishal Shah - Photographer</title>
+    <!-- Google Fonts for Ultra-Premium Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #f6f3f6; font-family: 'Outfit', sans-serif; overflow: hidden; position: fixed; top: 0; left: 0; }
+      #loader-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: #f6f3f6; z-index: 999999; display: flex;
+        flex-direction: column; justify-content: center; align-items: center;
+      }
+      .loader-content { display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px; }
+      .loader-name { font-family: 'Bodoni Moda', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 500; color: #181818; }
+      .loader-counter { font-family: 'Outfit', sans-serif; font-size: clamp(1.4rem, 3.5vw, 2.5rem); font-weight: 300; color: #666666; min-width: 80px; }
+      .loader-bar-bg { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: rgba(0, 0, 0, 0.05); }
+      .loader-bar-fill { width: 0%; height: 100%; background: #181818; }
+    </style>
+  </head>
+  <body>
+    <!-- Preloader Overlay -->
+    <div class="loader-overlay" id="loader-overlay">
+      <div class="loader-content">
+        <div class="loader-name">Vishal Shah</div>
+        <div class="loader-counter" id="loader-counter">0%</div>
+      </div>
+      <div class="loader-bar-bg">
+        <div class="loader-bar-fill" id="loader-bar"></div>
+      </div>
+    </div>
+
+    <!-- Top Header Identity -->
+    <header class="g-header">
+      <a href="#" class="g-header__logo">Vishal Shah</a>
+      <div class="g-header__status">is a photographer from Ahmedabad, Gujarat.</div>
+    </header>
+
+    <!-- Huge Background Section Title (Parallax / Reactive) -->
+    <div class="bg-typography" id="bg-title">HOME</div>
+
+    <!-- Main 3D Canvas Container -->
+    <main class="canvas-container" id="canvas-container">
+      <!-- Three.js renders here -->
+    </main>
+
+    <!-- Bottom Controls Bar -->
+    <div class="bottom-controls-bar">
+      <!-- Bottom Floating Glass Pill Navigation -->
+      <nav class="glass-pill-nav">
+        <div class="pill-thumb" id="pill-thumb">
+          <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=200&q=80" id="thumb-img" alt="Thumbnail">
+        </div>
+        
+        <div class="pill-label" id="pill-label">HOME</div>
+        
+        <div class="pill-controls">
+          <button class="nav-btn" id="prev-btn" aria-label="Previous Section">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          </button>
+          <button class="nav-btn" id="next-btn" aria-label="Next Section">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="pill-divider"></div>
+
+        <button class="menu-btn" id="menu-btn" aria-label="Open Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+        </button>
+      </nav>
+
+      <!-- MODE Toggle Button beside right of capsule pill -->
+      <button class="mode-toggle-btn" id="mode-btn" aria-label="Toggle Flat/Cylinder Mode">
+        <span class="mode-dot"></span>
+        <span id="mode-text">MODE: CYLINDER</span>
+      </button>
+    </div>
+
+    <!-- Drag instruction toast -->
+    <div class="drag-hint">Click & Drag to Rotate Canvas</div>
+
+    <!-- Section Content Modal / Drawer (For Profile, Portfolio, Contact) -->
+    <div class="content-modal" id="content-modal">
+      <div class="modal-backdrop" id="modal-close-backdrop"></div>
+      <div class="modal-card">
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+        <div class="modal-body" id="modal-body-content">
+          <!-- Dynamically injected content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Breaking Image Transition Overlay -->
+    <div class="breaking-overlay" id="breaking-overlay">
+      <div class="shatter-grid" id="shatter-grid"></div>
+    </div>
+
+    <!-- Global Back to Canvas Button (outside all pages to avoid pointer-event trapping) -->
+    <button class="hero-back-btn global-back-btn" id="global-back-btn" style="display:none;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      Back to Canvas
+    </button>
+
+    <!-- Full-Screen Pure Black Hero Page -->
+    <div class="hero-page" id="hero-page">
+      
+      <div class="hero-content-wrapper">
+        <div class="hero-top-label">PHOTOGRAPHER · BASED IN AHMEDABAD, GUJARAT</div>
+        
+        <h1 class="hero-h1" id="hero-name">
+          <!-- VISHAL SHAH wrapped in spans injected by JS -->
+        </h1>
+        
+        <div class="hero-typewriter" id="hero-typewriter"></div>
+        
+        <div class="hero-stats">
+          <div class="stat-block">
+            <div class="stat-num"><span id="stat-projects">0</span>+</div>
+            <div class="stat-label">Projects Completed</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-block">
+            <div class="stat-num"><span id="stat-years">0</span>+</div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-indicator">
+        <div class="pulse-line"></div>
+      </div>
+    </div>
+
+    <!-- Full-Screen Pure Black Profile Page -->
+    <div class="profile-page" id="profile-page">
+
+      <div class="profile-layout">
+        <!-- Left 45% Content -->
+        <div class="profile-left">
+          <div class="profile-anim-item profile-label">ABOUT</div>
+          <h2 class="profile-anim-item profile-h2">Every frame is a feeling.</h2>
+          <p class="profile-anim-item profile-p">I am Vishal Shah, a photographer based in Bhuj, Gujarat. For over 8 years I have been documenting love, emotion, and light across weddings, portraits, and commercial spaces.</p>
+          <p class="profile-anim-item profile-p">My work is guided by one belief: the best photographs are not taken — they are felt. Every session is a collaboration, every image a memory preserved.</p>
+          
+          <div class="profile-highlights">
+            <div class="profile-anim-item highlight-item">
+              <span class="highlight-line"></span>
+              <span>Canon EOS R5 · Fujifilm GFX 50S II</span>
+            </div>
+            <div class="profile-anim-item highlight-item">
+              <span class="highlight-line"></span>
+              <span>Available across India & International</span>
+            </div>
+            <div class="profile-anim-item highlight-item">
+              <span class="highlight-line"></span>
+              <span>Featured in Vogue India, Femina, and Grazia</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 55% Image -->
+        <div class="profile-right">
+          <div class="profile-img-wrapper" id="profile-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80" alt="Vishal Shah Portrait" class="profile-img">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-Screen Pure Dark Contact Page -->
+    <div class="contact-page" id="contact-page">
+
+      <div class="contact-container">
+        <!-- Left Column 40%: Stacked Info Cards + Map + Social Pills -->
+        <div class="contact-left">
+          <div class="contact-info-cards">
+            <!-- Card 1: Studio Location -->
+            <div class="contact-card contact-anim-card">
+              <div class="contact-icon-chip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9b99a" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="contact-card-content">
+                <div class="contact-card-label">Studio</div>
+                <div class="contact-card-text">Studio 4, Near Swaminarayan Temple, Bhuj, Gujarat 370001</div>
+              </div>
+            </div>
+
+            <!-- Card 2: Hours -->
+            <div class="contact-card contact-anim-card">
+              <div class="contact-icon-chip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9b99a" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="contact-card-content">
+                <div class="contact-card-label">Hours</div>
+                <div class="contact-card-text">Monday–Saturday · 10:00 AM – 7:00 PM IST</div>
+              </div>
+            </div>
+
+            <!-- Card 3: Email -->
+            <div class="contact-card contact-anim-card">
+              <div class="contact-icon-chip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9b99a" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="contact-card-content">
+                <div class="contact-card-label">Email</div>
+                <div class="contact-card-text"><a href="mailto:hello@vishalshah.in" class="contact-link">hello@vishalshah.in</a></div>
+              </div>
+            </div>
+
+            <!-- Card 4: Phone -->
+            <div class="contact-card contact-anim-card">
+              <div class="contact-icon-chip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9b99a" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div class="contact-card-content">
+                <div class="contact-card-label">Phone</div>
+                <div class="contact-card-text"><a href="tel:+919876543210" class="contact-link">+91 98765 43210</a></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Embedded Map + Social Pills -->
+          <div class="contact-anim-map">
+            <div class="contact-map-wrapper">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.056073105753!2d69.6644!3d23.2500!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39511e5b00000001%3A0x0!2zMjPCsDE1JzAwLjAiTiA2OcKwMzknNTIuMSJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                class="contact-map-iframe" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+              <a href="https://maps.google.com/?q=Bhuj,+Gujarat" target="_blank" rel="noopener noreferrer" class="map-floating-pill">
+                Open in Maps ↗
+              </a>
+            </div>
+
+            <div class="contact-social-pills">
+              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="social-pill-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>WhatsApp</span>
+              </a>
+              <a href="https://instagram.com/vishalshahstudio" target="_blank" rel="noopener noreferrer" class="social-pill-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column 55%: Contact Form Card -->
+        <div class="contact-right contact-anim-form">
+          <div class="contact-form-card">
+            <h2 class="contact-form-heading">Let's Make Something Beautiful.</h2>
+            <form class="hybrid-contact-form" onsubmit="event.preventDefault(); alert('Thank you! Your enquiry has been sent to Vishal Shah Studio. We will get back to you shortly.');">
+              
+              <div class="contact-form-group">
+                <label class="contact-label" for="c-name">Your Name *</label>
+                <input type="text" id="c-name" class="contact-input" placeholder="e.g. Vishal Mehta" required>
+              </div>
+
+              <div class="contact-form-group">
+                <label class="contact-label" for="c-phone">Phone Number *</label>
+                <input type="tel" id="c-phone" class="contact-input" placeholder="+91 99999 00000" required>
+              </div>
+
+              <div class="contact-form-group">
+                <label class="contact-label" for="c-email">Email (optional)</label>
+                <input type="email" id="c-email" class="contact-input" placeholder="you@example.com">
+              </div>
+
+              <div class="contact-form-group">
+                <label class="contact-label" for="c-event">Event Type</label>
+                <select id="c-event" class="contact-select">
+                  <option value="" disabled selected>-- Select --</option>
+                  <option value="Wedding">Wedding</option>
+                  <option value="Portrait Session">Portrait Session</option>
+                  <option value="Maternity">Maternity</option>
+                  <option value="Commercial Shoot">Commercial Shoot</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="contact-form-group">
+                <label class="contact-label" for="c-message">Message (optional)</label>
+                <textarea id="c-message" class="contact-textarea" rows="4" placeholder="Tell me about your event, date, location, and vision..."></textarea>
+              </div>
+
+              <div class="contact-form-group">
+                <button type="submit" class="contact-submit-btn">SEND ENQUIRY &rarr;</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-Screen Portfolio Page (content built dynamically by portfolio.js) -->
+    <div class="portfolio-page" id="portfolio-page">
+      <!-- JS will inject: back-btn, super-label, scroll-wrap with gallery, control-bar -->
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
