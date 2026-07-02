@@ -584,7 +584,7 @@ function openModal(index = activeIndex) {
   if (index === 2) {
     // Portfolio: open the dedicated full-screen portfolio page
     openPortfolioPage(triggerShatter);
-    showGlobalBack(() => { closePortfolioPage(); hideGlobalBack(); });
+    hideGlobalBack();
     return;
   }
   if (index === 3) {
@@ -607,17 +607,41 @@ function closeAllPages() {
   closePortfolioPage();
   closeContactPage();
   closeModal();
+  hideGlobalBack();
 }
 
-pillThumb.addEventListener('click', () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
-pillLabel.addEventListener('click', () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
-menuBtn.addEventListener('click', () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+function bindAction(elem, actionFn) {
+  if (!elem) return;
+  let lastTrigger = 0;
+  const handler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const now = Date.now();
+    if (now - lastTrigger < 350) return;
+    lastTrigger = now;
+    actionFn(e);
+  };
+  elem.addEventListener('click', handler);
+  elem.addEventListener('touchend', handler);
+}
+
+bindAction(pillThumb, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+bindAction(pillLabel, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+bindAction(menuBtn, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
 modalCloseBtn.addEventListener('click', closeModal);
 modalCloseBackdrop.addEventListener('click', closeModal);
+
+const bottomBarEl = document.querySelector('.bottom-controls-bar');
+if (bottomBarEl) {
+  ['touchstart', 'touchmove', 'touchend', 'pointerdown'].forEach(evt => {
+    bottomBarEl.addEventListener(evt, (e) => e.stopPropagation());
+  });
+}
 
 // Mouse & Touch Drag Interaction
 window.addEventListener('mousedown', (e) => {
   if (isAnyPageOpen()) return;
+  if (e.target.closest('.bottom-controls-bar') || e.target.closest('.glass-pill-nav') || e.target.closest('.mode-toggle-btn')) return;
   isDragging = true;
   startX = e.clientX;
   previousX = e.clientX;
@@ -649,6 +673,7 @@ window.addEventListener('mouseup', () => {
 // Touch support for mobile/tablet
 window.addEventListener('touchstart', (e) => {
   if (isAnyPageOpen()) return;
+  if (e.target.closest('.bottom-controls-bar') || e.target.closest('.glass-pill-nav') || e.target.closest('.mode-toggle-btn')) return;
   isDragging = true;
   startX = e.touches[0].clientX;
   previousX = e.touches[0].clientX;
@@ -818,7 +843,7 @@ function goToSection(index) {
   updateActiveSection(index);
 }
 
-prevBtn.addEventListener('click', () => {
+bindAction(prevBtn, () => {
   const wasOpen = isAnyPageOpen();
   if (wasOpen) closeAllPages();
   targetRotation += arcAngle;
@@ -827,7 +852,7 @@ prevBtn.addEventListener('click', () => {
   if (wasOpen) openModal(newIndex);
 });
 
-nextBtn.addEventListener('click', () => {
+bindAction(nextBtn, () => {
   const wasOpen = isAnyPageOpen();
   if (wasOpen) closeAllPages();
   targetRotation -= arcAngle;

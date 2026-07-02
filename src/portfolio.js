@@ -148,8 +148,18 @@ export function buildPortfolioDOM(container) {
     btn.className = `pf-menu-btn ${cat.key === 'all' ? 'active' : ''}`;
     btn.setAttribute('data-filter', cat.key);
     btn.textContent = cat.label;
-    btn.addEventListener('click', (e) => filterCategory(cat.key, btn));
+    const triggerCat = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      filterCategory(cat.key, btn);
+    };
+    btn.addEventListener('click', triggerCat);
+    btn.addEventListener('touchend', triggerCat);
     menuInner.appendChild(btn);
+  });
+
+  ['touchstart', 'touchmove', 'touchend', 'pointerdown'].forEach(evt => {
+    menuBar.addEventListener(evt, (e) => e.stopPropagation());
   });
 
   menuBar.appendChild(menuInner);
@@ -556,6 +566,8 @@ export function closePortfolioPage(e) {
   if (!page) return;
 
   page.classList.remove('active');
+  const globalBack = document.getElementById('global-back-btn');
+  if (globalBack) globalBack.style.display = 'none';
 }
 
 export function isPortfolioOpen() {
