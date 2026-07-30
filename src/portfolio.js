@@ -413,6 +413,8 @@ function openFullView(stripEl, itemData) {
     zIndex: 1000
   });
 
+  const state = Flip.getState(lightboxImg);
+
   const isMob = window.innerWidth <= 768;
   const openDur = isMob ? 0.65 : 0.95;
 
@@ -426,16 +428,42 @@ function openFullView(stripEl, itemData) {
   gsap.to('.pf-lightbox-nav', { opacity: 1, pointerEvents: 'auto', duration: 0.4, delay: isMob ? 0.2 : 0.35 });
   gsap.to(lightboxCaption, { opacity: 1, y: 0, duration: 0.4, delay: isMob ? 0.25 : 0.4 });
 
-  // Animate smoothly to center viewport with object-fit: contain (Zero Cropping!)
-  gsap.to(lightboxImg, {
-    top: '6vh',
-    left: '6vw',
-    width: '88vw',
-    height: '88vh',
+  // Calculate exact bounds to maintain image aspect ratio without using contain
+  const natWidth = stripImg.naturalWidth || 800;
+  const natHeight = stripImg.naturalHeight || 1200;
+  const imgRatio = natWidth / natHeight;
+
+  const maxW = window.innerWidth * 0.88;
+  const maxH = window.innerHeight * 0.88;
+  const containerRatio = maxW / maxH;
+
+  let finalW, finalH;
+  if (imgRatio > containerRatio) {
+    finalW = maxW;
+    finalH = maxW / imgRatio;
+  } else {
+    finalH = maxH;
+    finalW = maxH * imgRatio;
+  }
+
+  const finalTop = (window.innerHeight - finalH) / 2;
+  const finalLeft = (window.innerWidth - finalW) / 2;
+
+  // Move to final state, keeping objectFit: 'cover'
+  gsap.set(lightboxImg, {
+    top: finalTop + 'px',
+    left: finalLeft + 'px',
+    width: finalW + 'px',
+    height: finalH + 'px',
     borderRadius: '8px',
-    objectFit: 'contain',
+    objectFit: 'cover'
+  });
+
+  // Animate smoothly to center viewport (Perfect Aikawakenichi reveal)
+  Flip.from(state, {
     duration: openDur,
-    ease: 'power3.inOut'
+    ease: 'power3.inOut',
+    absolute: true
   });
 }
 
@@ -496,6 +524,8 @@ function closeFullView() {
 
   if (!lightboxImg || !stripImg) return;
 
+  const state = Flip.getState(lightboxImg);
+
   const rect = stripImg.getBoundingClientRect();
   const isMob = window.innerWidth <= 768;
   const closeDur = isMob ? 0.6 : 0.85;
@@ -506,16 +536,21 @@ function closeFullView() {
   gsap.to('.pf-lightbox-nav', { opacity: 0, pointerEvents: 'none', duration: 0.3 });
   gsap.to(lightboxCaption, { opacity: 0, duration: 0.3 });
 
-  // Switch object-fit back to cover as it rolls back into the strip sliver
-  gsap.to(lightboxImg, {
+  // Move to final closed state
+  gsap.set(lightboxImg, {
     top: rect.top,
     left: rect.left,
     width: rect.width,
     height: rect.height,
     borderRadius: '4px',
-    objectFit: 'cover',
+    objectFit: 'cover'
+  });
+
+  // Smoothly roll back into the strip sliver
+  Flip.from(state, {
     duration: closeDur,
     ease: 'power3.inOut',
+    absolute: true,
     onComplete: () => {
       document.getElementById('pf-lightbox')?.classList.remove('active');
       isLightboxOpen = false;
