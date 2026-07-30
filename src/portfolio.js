@@ -101,6 +101,7 @@ portfolioData.forEach(group => {
 /* ─── State ──────────────────────────────────────────────────────── */
 let isOpen = false;
 let currentCategory = 'all';
+let currentLayout = 'grid'; // 'grid' | 'list'
 let isLightboxOpen = false;
 let activeStripEl = null;
 let singleSetWidth = 0;
@@ -229,35 +230,82 @@ export function buildPortfolioDOM(container) {
     <div class="pf-lightbox-backdrop" id="pf-lightbox-backdrop"></div>
     <div class="pf-lightbox-container" id="pf-lightbox-container">
       <img src="" alt="Full View" class="pf-lightbox-img" id="pf-lightbox-img">
-      <div class="pf-lightbox-caption" id="pf-lightbox-caption"></div>
-    </div>
-    <button class="pf-lightbox-nav pf-lightbox-prev" id="pf-lightbox-prev" aria-label="Previous image">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M15 18l-6-6 6-6"/>
-      </svg>
-    </button>
-    <button class="pf-lightbox-nav pf-lightbox-next" id="pf-lightbox-next" aria-label="Next image">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 18l6-6-6-6"/>
-      </svg>
-    </button>
-    <button class="pf-lightbox-close" id="pf-lightbox-close">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>`;
+    </div>`;
   container.appendChild(lightbox);
+
+  /* New Glassmorphism Action Pill (Aikawakenichi style) */
+  const glassPill = document.createElement('div');
+  glassPill.className = 'pf-glass-pill mode-gallery';
+  glassPill.id = 'pf-glass-pill';
+  glassPill.innerHTML = `
+    <div class="pill-left">
+      <!-- Gallery Mode: Shows Category -->
+      <span class="pill-cat-text" id="pill-cat-text">ALL ARCHIVES</span>
+      
+      <!-- Lightbox Mode: Shows Image Info & Nav -->
+      <div class="pill-lightbox-info">
+        <div class="pill-thumb-circle">
+          <img src="" id="pill-thumb-img" alt="thumb">
+        </div>
+        <button class="pill-nav-btn" id="pill-prev-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span class="pill-counter" id="pill-counter">1 / 10</span>
+        <button class="pill-nav-btn" id="pill-next-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    
+    <div class="pill-right">
+      <!-- Gallery Mode: Layout Toggle -->
+      <div class="pill-layout-toggle" id="pill-layout-toggle">
+        <div class="layout-icon">
+          <span class="dot"></span><span class="dot"></span>
+          <span class="dot"></span><span class="dot"></span>
+        </div>
+        <div class="layout-options">
+          <button class="layout-btn active" data-layout="grid">GRID</button>
+          <button class="layout-btn" data-layout="list">LIST</button>
+        </div>
+      </div>
+      
+      <!-- Lightbox Mode: Close Button -->
+      <button class="pill-close-btn" id="pill-close-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  `;
+  container.appendChild(glassPill);
 
   /* Lightbox events */
   lightbox.querySelector('#pf-lightbox-backdrop')?.addEventListener('click', closeFullView);
-  lightbox.querySelector('#pf-lightbox-close')?.addEventListener('click', closeFullView);
   lightbox.querySelector('#pf-lightbox-img')?.addEventListener('click', closeFullView);
-  lightbox.querySelector('#pf-lightbox-prev')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
-  lightbox.querySelector('#pf-lightbox-next')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
+  
+  /* Pill Events */
+  glassPill.querySelector('#pill-close-btn')?.addEventListener('click', closeFullView);
+  glassPill.querySelector('#pill-prev-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
+  glassPill.querySelector('#pill-next-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
+  
+  const layoutBtns = glassPill.querySelectorAll('.layout-btn');
+  layoutBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const layout = btn.getAttribute('data-layout');
+      layoutBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      toggleLayout(layout);
+    });
+  });
 
   /* Infinite Scroll Monitor */
-  scrollWrap.addEventListener('scroll', handleInfiniteHorizontalScroll, { passive: true });
+  scrollWrap.addEventListener('scroll', () => {
+    if (currentLayout === 'grid') {
+      handleInfiniteHorizontalScroll();
+    } else {
+      handleVerticalAbsorbScroll();
+    }
+  }, { passive: true });
 }
 
 /* ─── Infinite Horizontal Scroll Handler ─────────────────────────── */
@@ -376,14 +424,12 @@ function openFullView(stripEl, itemData) {
 
   const lightbox = document.getElementById('pf-lightbox');
   const lightboxImg = document.getElementById('pf-lightbox-img');
-  const lightboxCaption = document.getElementById('pf-lightbox-caption');
   const stripImg = stripEl.querySelector('.pf-img');
 
   if (!lightbox || !lightboxImg || !stripImg) return;
 
   // 1) IMMEDIATELY set src to the already-cached thumbnail url to prevent flash of previous image
   lightboxImg.src = itemData.url;
-  lightboxCaption.textContent = `${itemData.title} Collection`;
 
   // 2) Preload high-res version in background and upgrade silently when downloaded
   if (itemData.fullUrl && itemData.fullUrl !== itemData.url) {
@@ -424,9 +470,18 @@ function openFullView(stripEl, itemData) {
     { yPercent: 0, opacity: 1, duration: openDur, ease: 'power3.inOut' }
   );
 
-  gsap.to('#pf-lightbox-close', { opacity: 1, pointerEvents: 'auto', duration: 0.4, delay: isMob ? 0.2 : 0.35 });
-  gsap.to('.pf-lightbox-nav', { opacity: 1, pointerEvents: 'auto', duration: 0.4, delay: isMob ? 0.2 : 0.35 });
-  gsap.to(lightboxCaption, { opacity: 1, y: 0, duration: 0.4, delay: isMob ? 0.25 : 0.4 });
+  const glassPill = document.getElementById('pf-glass-pill');
+  if (glassPill) {
+    glassPill.classList.remove('mode-gallery');
+    glassPill.classList.add('mode-lightbox');
+    const thumbImg = document.getElementById('pill-thumb-img');
+    if (thumbImg) thumbImg.src = itemData.url;
+    
+    const visibleStrips = Array.from(document.querySelectorAll('.pf-item--strip:not([style*="display: none"])'));
+    const currentIdx = visibleStrips.indexOf(activeStripEl);
+    const counterEl = document.getElementById('pill-counter');
+    if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${visibleStrips.length}`;
+  }
 
   // Calculate exact bounds to maintain image aspect ratio without using contain
   const natWidth = stripImg.naturalWidth || 800;
@@ -486,9 +541,11 @@ function navigateLightbox(direction) {
   const itemData = itemIdx !== -1 ? allItems[itemIdx] : { url: nextImgEl.src, title: nextStripEl.getAttribute('data-category')?.toUpperCase() || 'Archive' };
 
   const lightboxImg = document.getElementById('pf-lightbox-img');
-  const lightboxCaption = document.getElementById('pf-lightbox-caption');
+  const thumbImg = document.getElementById('pill-thumb-img');
+  const counterEl = document.getElementById('pill-counter');
 
-  if (lightboxCaption) lightboxCaption.textContent = `${itemData.title} Collection`;
+  if (counterEl) counterEl.textContent = `${nextIdx + 1} / ${visibleStrips.length}`;
+  if (thumbImg) thumbImg.src = itemData.url;
 
   if (lightboxImg) {
     gsap.to(lightboxImg, {
@@ -532,9 +589,12 @@ function closeFullView() {
 
   // Aikawakenichi downward black curtain reveal (white canvas slides downwards from top)
   gsap.to('#pf-lightbox-backdrop', { yPercent: 100, duration: closeDur, ease: 'power3.inOut' });
-  gsap.to('#pf-lightbox-close', { opacity: 0, pointerEvents: 'none', duration: 0.3 });
-  gsap.to('.pf-lightbox-nav', { opacity: 0, pointerEvents: 'none', duration: 0.3 });
-  gsap.to(lightboxCaption, { opacity: 0, duration: 0.3 });
+  
+  const glassPill = document.getElementById('pf-glass-pill');
+  if (glassPill) {
+    glassPill.classList.remove('mode-lightbox');
+    glassPill.classList.add('mode-gallery');
+  }
 
   // Move to final closed state
   gsap.set(lightboxImg, {
@@ -557,6 +617,98 @@ function closeFullView() {
       activeStripEl = null;
       // Clear src so previous image is never held in memory for next click
       lightboxImg.removeAttribute('src');
+    }
+  });
+}
+
+/* ─── Layout Toggle & Scroll Effect ──────────────────────────────── */
+function toggleLayout(layout) {
+  if (currentLayout === layout) return;
+  currentLayout = layout;
+  
+  const scrollWrap = document.getElementById('pf-scroll-wrap');
+  const gallery = document.getElementById('pf-gallery');
+  if (!scrollWrap || !gallery) return;
+
+  if (layout === 'list') {
+    scrollWrap.classList.remove('pf-scroll-wrap--strip');
+    scrollWrap.classList.add('pf-scroll-wrap--list');
+    gallery.classList.remove('pf-gallery--strip');
+    gallery.classList.add('pf-gallery--list');
+    
+    // reset scroll for list mode
+    scrollWrap.scrollLeft = 0;
+    scrollWrap.scrollTop = 0;
+    
+    // reset interaction styles from strip mode
+    const items = gallery.querySelectorAll('.pf-item--strip');
+    items.forEach(item => {
+      gsap.killTweensOf(item);
+      item.style.flexGrow = '';
+      const img = item.querySelector('.pf-img');
+      if (img) {
+        gsap.killTweensOf(img);
+        img.style.transform = '';
+        img.style.filter = '';
+      }
+    });
+  } else {
+    scrollWrap.classList.remove('pf-scroll-wrap--list');
+    scrollWrap.classList.add('pf-scroll-wrap--strip');
+    gallery.classList.remove('pf-gallery--list');
+    gallery.classList.add('pf-gallery--strip');
+    
+    // reset scroll for strip mode
+    scrollWrap.scrollTop = 0;
+    scrollWrap.scrollLeft = singleSetWidth;
+    
+    // cleanup list inline styles
+    const items = gallery.querySelectorAll('.pf-item--strip');
+    items.forEach(item => {
+      const img = item.querySelector('.pf-img');
+      if (img) {
+        img.style.transform = '';
+        img.style.filter = '';
+      }
+    });
+  }
+}
+
+function handleVerticalAbsorbScroll() {
+  if (currentLayout !== 'list') return;
+  const items = document.querySelectorAll('.pf-gallery--list .pf-item--strip:not([style*="display: none"])');
+  // Sticky top offset (we'll set top: 10vh in CSS)
+  const stickyTop = window.innerHeight * 0.10;
+  
+  items.forEach((item, i) => {
+    const rect = item.getBoundingClientRect();
+    const imgWrap = item.querySelector('.pf-img-wrap');
+    if (!imgWrap) return;
+
+    if (rect.top <= stickyTop + 2) {
+      const nextItem = items[i + 1];
+      if (nextItem) {
+        const nextRect = nextItem.getBoundingClientRect();
+        const distance = nextRect.top - stickyTop;
+        
+        let progress = 1 - (distance / (window.innerHeight * 0.7));
+        if (progress < 0) progress = 0;
+        if (progress > 1) progress = 1;
+        
+        // Scale down to 0.85 and darken to brightness 0.4
+        const scale = 1 - (progress * 0.15);
+        const brightness = 1 - (progress * 0.6);
+        
+        imgWrap.style.transform = `scale(${scale})`;
+        imgWrap.style.filter = `brightness(${brightness})`;
+        imgWrap.style.transformOrigin = 'top center';
+      } else {
+        imgWrap.style.transform = 'scale(1)';
+        imgWrap.style.filter = 'brightness(1)';
+      }
+    } else {
+      imgWrap.style.transform = 'scale(1)';
+      imgWrap.style.filter = 'brightness(1)';
     }
   });
 }
