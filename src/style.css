@@ -1453,34 +1453,62 @@ html, body {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 9999px;
-  padding: 6px;
-  z-index: 1005; /* High enough to be above lightbox */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  gap: 12px;
+  z-index: 1005;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  min-width: 200px;
+  pointer-events: none;
+}
+
+.portfolio-page.active .pf-glass-pill > * {
+  pointer-events: auto;
+}
+
+/* Premium Frosted Glass Effect */
+.pill-left, .pill-layout-toggle, .pill-close-btn {
+  background: rgba(20, 20, 20, 0.35);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .pf-glass-pill .pill-left {
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  height: 44px;
+  padding: 0 24px;
+  height: 56px;
+  border-radius: 12px;
+  transition: all 0.4s ease;
+}
+
+.pill-gallery-info {
+  display: flex;
+  align-items: center;
 }
 
 .pill-cat-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.pill-cat-text .pill-label {
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  color: #181818;
-  white-space: nowrap;
-  transition: opacity 0.3s;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.05em;
+}
+
+.pill-cat-text .pill-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
 }
 
 /* Lightbox Info in Pill */
@@ -1491,12 +1519,14 @@ html, body {
 }
 
 .pill-thumb-circle {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.5);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.7);
+  margin-right: 8px;
+  margin-left: -12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
 }
 
 .pill-thumb-circle img {
@@ -1506,28 +1536,31 @@ html, body {
 }
 
 .pill-nav-btn {
-  background: transparent;
-  border: none;
-  color: #181818;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  transition: transform 0.2s;
+  transition: all 0.2s;
 }
 
 .pill-nav-btn:hover {
-  transform: scale(1.15);
+  background: rgba(0,0,0,0.3);
+  transform: scale(1.1);
 }
 
 .pill-counter {
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: #181818;
-  letter-spacing: 0.1em;
-  min-width: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.08em;
+  min-width: 60px;
   text-align: center;
 }
 
@@ -1538,41 +1571,47 @@ html, body {
   position: relative;
 }
 
-/* Layout Toggle (Circle to Rectangle) */
+/* Layout Toggle */
 .pill-layout-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: #181818;
-  color: #fff;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  position: relative;
 }
 
 .pill-layout-toggle:hover {
   width: 120px;
-  border-radius: 9999px;
+  border-radius: 28px;
 }
 
 .layout-icon {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
-  width: 14px;
-  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   transition: opacity 0.3s;
 }
 
-.layout-icon .dot {
-  background: #fff;
-  width: 100%;
-  height: 100%;
-  border-radius: 2px;
+.layout-icon::before, .layout-icon::after {
+  content: '';
+  width: 5px;
+  height: 14px;
+  border: 2px solid #fff;
+}
+.layout-icon::before {
+  border-right: none;
+  border-radius: 2px 0 0 2px;
+  margin-right: 4px;
+}
+.layout-icon::after {
+  border-left: none;
+  border-radius: 0 2px 2px 0;
 }
 
 .pill-layout-toggle:hover .layout-icon {
@@ -1580,46 +1619,29 @@ html, body {
   pointer-events: none;
 }
 
-.layout-options {
-  display: flex;
-  gap: 8px;
+.layout-label {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
   position: absolute;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #fff;
   white-space: nowrap;
 }
 
-.pill-layout-toggle:hover .layout-options {
+.pill-layout-toggle:hover .layout-label {
   opacity: 1;
-  pointer-events: auto;
-}
-
-.layout-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255,255,255,0.5);
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.layout-btn.active, .layout-btn:hover {
-  color: #fff;
 }
 
 /* Close Button in Lightbox Mode */
 .pill-close-btn {
   display: none;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: #181818;
-  color: #fff;
-  border: none;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -1631,7 +1653,7 @@ html, body {
 }
 
 /* Pill Mode States */
-.pf-glass-pill.mode-lightbox .pill-cat-text {
+.pf-glass-pill.mode-lightbox .pill-gallery-info {
   display: none;
 }
 

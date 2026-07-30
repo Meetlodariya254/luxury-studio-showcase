@@ -239,8 +239,16 @@ export function buildPortfolioDOM(container) {
   glassPill.id = 'pf-glass-pill';
   glassPill.innerHTML = `
     <div class="pill-left">
-      <!-- Gallery Mode: Shows Category -->
-      <span class="pill-cat-text" id="pill-cat-text">ALL ARCHIVES</span>
+      <!-- Gallery Mode: Shows Category & Thumb -->
+      <div class="pill-gallery-info" id="pill-gallery-info">
+        <div class="pill-thumb-circle">
+          <img src="" id="pill-gallery-thumb" alt="thumb">
+        </div>
+        <div class="pill-cat-text" id="pill-cat-text">
+          <span class="pill-label">Category</span>
+          <span class="pill-value">ALL ARCHIVES</span>
+        </div>
+      </div>
       
       <!-- Lightbox Mode: Shows Image Info & Nav -->
       <div class="pill-lightbox-info">
@@ -264,10 +272,7 @@ export function buildPortfolioDOM(container) {
           <span class="dot"></span><span class="dot"></span>
           <span class="dot"></span><span class="dot"></span>
         </div>
-        <div class="layout-options">
-          <button class="layout-btn active" data-layout="grid">GRID</button>
-          <button class="layout-btn" data-layout="list">LIST</button>
-        </div>
+        <span class="layout-label">LAYOUT</span>
       </div>
       
       <!-- Lightbox Mode: Close Button -->
@@ -287,16 +292,20 @@ export function buildPortfolioDOM(container) {
   glassPill.querySelector('#pill-prev-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
   glassPill.querySelector('#pill-next-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
   
-  const layoutBtns = glassPill.querySelectorAll('.layout-btn');
-  layoutBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  const layoutToggleBtn = glassPill.querySelector('#pill-layout-toggle');
+  if (layoutToggleBtn) {
+    layoutToggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const layout = btn.getAttribute('data-layout');
-      layoutBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      toggleLayout(layout);
+      const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
+      toggleLayout(newLayout);
     });
-  });
+  }
+
+  // Initialize gallery thumb with first image
+  const galleryThumb = glassPill.querySelector('#pill-gallery-thumb');
+  if (galleryThumb && portfolioData.length > 0 && portfolioData[0].images.length > 0) {
+    galleryThumb.src = portfolioData[0].images[0];
+  }
 
   /* Infinite Scroll Monitor */
   scrollWrap.addEventListener('scroll', () => {
@@ -336,6 +345,13 @@ function initStripInteractions() {
     const strip = e.target.closest('.pf-item--strip');
     if (!strip) return;
 
+    // Update gallery thumb dynamically on hover
+    const stripImg = strip.querySelector('.pf-img');
+    const galleryThumb = document.getElementById('pill-gallery-thumb');
+    if (stripImg && galleryThumb) {
+      galleryThumb.src = stripImg.src;
+    }
+
     const allStrips = gallery.querySelectorAll('.pf-item--strip:not([style*="display: none"])');
     allStrips.forEach(s => {
       if (s === strip) {
@@ -352,9 +368,9 @@ function initStripInteractions() {
     allStrips.forEach(s => gsap.to(s, { flexGrow: 1, duration: 0.4, ease: 'power2.out' }));
   });
 
-  // Enable smooth mousewheel horizontal scrolling
+  // Enable smooth mousewheel horizontal scrolling only in grid mode
   scrollWrap?.addEventListener('wheel', (e) => {
-    if (isLightboxOpen) return;
+    if (isLightboxOpen || currentLayout === 'list') return;
     e.preventDefault();
     scrollWrap.scrollLeft += e.deltaY + e.deltaX;
   }, { passive: false });
@@ -373,6 +389,15 @@ function filterCategory(categoryKey, targetBtn) {
       duration: 0.45,
       ease: 'power3.out'
     });
+    
+    // Update the bottom pill category text
+    const pillCatText = document.getElementById('pill-cat-text');
+    if (pillCatText) {
+      pillCatText.innerHTML = `
+        <span class="pill-label">Category</span>
+        <span class="pill-value">${targetBtn.textContent.toUpperCase()}</span>
+      `;
+    }
   }
 
   document.querySelectorAll('.pf-menu-btn').forEach(btn => {
