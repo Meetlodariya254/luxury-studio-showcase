@@ -1693,9 +1693,9 @@ html, body {
   flex: none !important;
   position: sticky !important;
   top: 10vh !important;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+  box-shadow: none !important;
   transform-origin: top center;
-  will-change: transform, filter;
+  will-change: transform;
   cursor: pointer;
   background: transparent;
 }
@@ -1703,6 +1703,7 @@ html, body {
 .pf-gallery--list .pf-img-wrap {
   overflow: hidden;
   border-radius: 8px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
 
 .pf-click-note {

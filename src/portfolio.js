@@ -720,12 +720,11 @@ function handleVerticalAbsorbScroll() {
         if (progress < 0) progress = 0;
         if (progress > 1) progress = 1;
         
-        // Scale down to 0.85 and darken to brightness 0.4
+        // Scale down to 0.85
         const scale = 1 - (progress * 0.15);
-        const brightness = 1 - (progress * 0.6);
         
         imgWrap.style.transform = `scale(${scale})`;
-        imgWrap.style.filter = `brightness(${brightness})`;
+        imgWrap.style.filter = '';
         imgWrap.style.transformOrigin = 'top center';
       } else {
         imgWrap.style.transform = 'scale(1)';
