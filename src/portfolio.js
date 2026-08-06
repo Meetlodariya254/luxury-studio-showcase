@@ -220,7 +220,7 @@ export function buildPortfolioDOM(container) {
   const clickNote = document.createElement('h4');
   clickNote.className = 'pf-click-note';
   clickNote.id = 'pf-click-note';
-  clickNote.textContent = 'click on image to see full view';
+  clickNote.textContent = 'CLICK ON IMAGE TO SEE FULL VIEW';
   container.appendChild(clickNote);
 
   /* Full View / Lightbox Modal */
@@ -239,13 +239,6 @@ export function buildPortfolioDOM(container) {
   glassPill.className = 'pf-glass-pill mode-gallery';
   glassPill.id = 'pf-glass-pill';
   glassPill.innerHTML = `
-    <!-- Back Circle Button -->
-    <button class="pill-back-btn" id="pill-back-btn" aria-label="Back to Canvas">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 17v-5H5M11 7l-6 5 6 5"/>
-      </svg>
-    </button>
-
     <div class="pill-left" id="pill-center-pill">
       <!-- Gallery Mode: Shows Category & Thumb -->
       <div class="pill-gallery-info" id="pill-gallery-info">
@@ -273,16 +266,14 @@ export function buildPortfolioDOM(container) {
       </div>
     </div>
     
-    <div class="pill-right">
-      <!-- Gallery Mode: Layout Toggle -->
-      <div class="pill-layout-toggle" id="pill-layout-toggle">
-        <div class="layout-icon-svg" id="layout-icon-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/>
-          </svg>
-        </div>
-        <span class="layout-label">LAYOUT</span>
+    <div class="pill-right pill-layout-toggle" id="pill-layout-toggle">
+      <!-- Gallery Mode: Layout Toggle Icon & Label -->
+      <div class="layout-icon-svg" id="layout-icon-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/>
+        </svg>
       </div>
+      <span class="layout-label">LAYOUT</span>
       
       <!-- Lightbox Mode: Close Button -->
       <button class="pill-close-btn" id="pill-close-btn">
@@ -300,12 +291,6 @@ export function buildPortfolioDOM(container) {
   glassPill.querySelector('#pill-close-btn')?.addEventListener('click', closeFullView);
   glassPill.querySelector('#pill-prev-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
   glassPill.querySelector('#pill-next-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
-
-  /* Back Button event */
-  glassPill.querySelector('#pill-back-btn')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closePortfolioPage(e);
-  });
   
   const updatePillHoverState = (isHovered) => {
     const glassPillEl = document.getElementById('pf-glass-pill');
@@ -332,17 +317,23 @@ export function buildPortfolioDOM(container) {
 
   const layoutToggleBtn = glassPill.querySelector('#pill-layout-toggle');
   if (layoutToggleBtn) {
-    layoutToggleBtn.addEventListener('mouseenter', () => updatePillHoverState(true));
-    layoutToggleBtn.addEventListener('mouseleave', () => updatePillHoverState(false));
-    layoutToggleBtn.addEventListener('touchstart', () => updatePillHoverState(true), { passive: true });
+    ['mouseenter', 'pointerenter', 'touchstart'].forEach(evt => {
+      layoutToggleBtn.addEventListener(evt, () => updatePillHoverState(true), { passive: true });
+    });
+    ['mouseleave', 'pointerleave'].forEach(evt => {
+      layoutToggleBtn.addEventListener(evt, () => updatePillHoverState(false), { passive: true });
+    });
     layoutToggleBtn.addEventListener('touchend', () => {
-      setTimeout(() => updatePillHoverState(false), 1500);
+      setTimeout(() => updatePillHoverState(false), 1200);
     }, { passive: true });
 
-    layoutToggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
-      toggleLayout(newLayout);
+    ['click', 'pointerdown'].forEach(evt => {
+      layoutToggleBtn.addEventListener(evt, (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
+        toggleLayout(newLayout);
+      });
     });
   }
 
