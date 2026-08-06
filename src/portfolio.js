@@ -101,6 +101,7 @@ portfolioData.forEach(group => {
 /* ─── State ──────────────────────────────────────────────────────── */
 let isOpen = false;
 let currentCategory = 'all';
+let currentCategoryTitle = 'ALL ARCHIVES';
 let currentLayout = 'grid'; // 'grid' | 'list'
 let isLightboxOpen = false;
 let activeStripEl = null;
@@ -238,15 +239,22 @@ export function buildPortfolioDOM(container) {
   glassPill.className = 'pf-glass-pill mode-gallery';
   glassPill.id = 'pf-glass-pill';
   glassPill.innerHTML = `
-    <div class="pill-left">
+    <!-- Back Circle Button -->
+    <button class="pill-back-btn" id="pill-back-btn" aria-label="Back to Canvas">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 17v-5H5M11 7l-6 5 6 5"/>
+      </svg>
+    </button>
+
+    <div class="pill-left" id="pill-center-pill">
       <!-- Gallery Mode: Shows Category & Thumb -->
       <div class="pill-gallery-info" id="pill-gallery-info">
         <div class="pill-thumb-circle">
           <img src="" id="pill-gallery-thumb" alt="thumb">
         </div>
         <div class="pill-cat-text" id="pill-cat-text">
-          <span class="pill-label">Category</span>
-          <span class="pill-value">ALL ARCHIVES</span>
+          <span class="pill-label" id="pill-label-top">Category</span>
+          <span class="pill-value" id="pill-value-bottom">ALL ARCHIVES</span>
         </div>
       </div>
       
@@ -268,9 +276,10 @@ export function buildPortfolioDOM(container) {
     <div class="pill-right">
       <!-- Gallery Mode: Layout Toggle -->
       <div class="pill-layout-toggle" id="pill-layout-toggle">
-        <div class="layout-icon">
-          <span class="dot"></span><span class="dot"></span>
-          <span class="dot"></span><span class="dot"></span>
+        <div class="layout-icon-svg" id="layout-icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/>
+          </svg>
         </div>
         <span class="layout-label">LAYOUT</span>
       </div>
@@ -291,9 +300,45 @@ export function buildPortfolioDOM(container) {
   glassPill.querySelector('#pill-close-btn')?.addEventListener('click', closeFullView);
   glassPill.querySelector('#pill-prev-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
   glassPill.querySelector('#pill-next-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
+
+  /* Back Button event */
+  glassPill.querySelector('#pill-back-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePortfolioPage(e);
+  });
   
+  const updatePillHoverState = (isHovered) => {
+    const glassPillEl = document.getElementById('pf-glass-pill');
+    const layoutBtn = document.getElementById('pill-layout-toggle');
+    const labelTop = document.getElementById('pill-label-top');
+    const valueBottom = document.getElementById('pill-value-bottom');
+
+    if (isHovered) {
+      glassPillEl?.classList.add('is-hovered');
+      layoutBtn?.classList.add('active');
+      if (labelTop && valueBottom) {
+        labelTop.style.display = 'none';
+        valueBottom.textContent = currentLayout === 'grid' ? 'GRID' : 'LIST';
+      }
+    } else {
+      glassPillEl?.classList.remove('is-hovered');
+      layoutBtn?.classList.remove('active');
+      if (labelTop && valueBottom) {
+        labelTop.style.display = '';
+        valueBottom.textContent = currentCategoryTitle;
+      }
+    }
+  };
+
   const layoutToggleBtn = glassPill.querySelector('#pill-layout-toggle');
   if (layoutToggleBtn) {
+    layoutToggleBtn.addEventListener('mouseenter', () => updatePillHoverState(true));
+    layoutToggleBtn.addEventListener('mouseleave', () => updatePillHoverState(false));
+    layoutToggleBtn.addEventListener('touchstart', () => updatePillHoverState(true), { passive: true });
+    layoutToggleBtn.addEventListener('touchend', () => {
+      setTimeout(() => updatePillHoverState(false), 1500);
+    }, { passive: true });
+
     layoutToggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
@@ -383,6 +428,7 @@ function filterCategory(categoryKey, targetBtn) {
 
   // Update sliding indicator pill position
   if (targetBtn) {
+    currentCategoryTitle = targetBtn.textContent.toUpperCase();
     gsap.to('#pf-menu-slider', {
       left: targetBtn.offsetLeft,
       width: targetBtn.offsetWidth,
@@ -391,12 +437,9 @@ function filterCategory(categoryKey, targetBtn) {
     });
     
     // Update the bottom pill category text
-    const pillCatText = document.getElementById('pill-cat-text');
-    if (pillCatText) {
-      pillCatText.innerHTML = `
-        <span class="pill-label">Category</span>
-        <span class="pill-value">${targetBtn.textContent.toUpperCase()}</span>
-      `;
+    const valueBottom = document.getElementById('pill-value-bottom');
+    if (valueBottom) {
+      valueBottom.textContent = currentCategoryTitle;
     }
   }
 
@@ -650,6 +693,21 @@ function closeFullView() {
 function toggleLayout(layout) {
   if (currentLayout === layout) return;
   currentLayout = layout;
+  
+  const iconBox = document.getElementById('layout-icon-box');
+  if (iconBox) {
+    if (layout === 'grid') {
+      iconBox.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/></svg>`;
+    } else {
+      iconBox.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6H5v12h3"/><path d="M16 6h3v12h-3"/></svg>`;
+    }
+  }
+
+  const valueBottom = document.getElementById('pill-value-bottom');
+  const glassPillEl = document.getElementById('pf-glass-pill');
+  if (glassPillEl && glassPillEl.classList.contains('is-hovered') && valueBottom) {
+    valueBottom.textContent = layout === 'grid' ? 'GRID' : 'LIST';
+  }
   
   const scrollWrap = document.getElementById('pf-scroll-wrap');
   const gallery = document.getElementById('pf-gallery');
