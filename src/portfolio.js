@@ -256,28 +256,37 @@ export function buildPortfolioDOM(container) {
         <div class="pill-thumb-circle">
           <img src="" id="pill-thumb-img" alt="thumb">
         </div>
-        <button class="pill-nav-btn" id="pill-prev-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <span class="pill-counter" id="pill-counter">1 / 10</span>
-        <button class="pill-nav-btn" id="pill-next-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+        <div class="pill-lightbox-text">
+          <span class="pill-counter" id="pill-counter">1 — 10</span>
+        </div>
+        <div class="pill-nav-buttons">
+          <button class="pill-nav-btn" id="pill-prev-btn" aria-label="Previous Image">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+          </button>
+          <button class="pill-nav-btn" id="pill-next-btn" aria-label="Next Image">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
     
-    <div class="pill-right pill-layout-toggle" id="pill-layout-toggle">
+    <div class="pill-right">
       <!-- Gallery Mode: Layout Toggle Icon & Label -->
-      <div class="layout-icon-svg" id="layout-icon-box">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/>
-        </svg>
+      <div class="pill-layout-toggle" id="pill-layout-toggle">
+        <div class="layout-icon-svg" id="layout-icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9V6h12v3"/><path d="M6 15v3h12v-3"/>
+          </svg>
+        </div>
+        <span class="layout-label">LAYOUT</span>
       </div>
-      <span class="layout-label">LAYOUT</span>
       
       <!-- Lightbox Mode: Close Button -->
-      <button class="pill-close-btn" id="pill-close-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <button class="pill-close-btn" id="pill-close-btn" aria-label="Close Lightbox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
       </button>
     </div>
   `;
@@ -537,7 +546,7 @@ function openFullView(stripEl, itemData) {
     const visibleStrips = Array.from(document.querySelectorAll('.pf-item--strip:not([style*="display: none"])'));
     const currentIdx = visibleStrips.indexOf(activeStripEl);
     const counterEl = document.getElementById('pill-counter');
-    if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${visibleStrips.length}`;
+    if (counterEl) counterEl.textContent = `${currentIdx + 1} — ${visibleStrips.length}`;
   }
 
   // Calculate exact bounds to maintain image aspect ratio without using contain
@@ -601,7 +610,7 @@ function navigateLightbox(direction) {
   const thumbImg = document.getElementById('pill-thumb-img');
   const counterEl = document.getElementById('pill-counter');
 
-  if (counterEl) counterEl.textContent = `${nextIdx + 1} / ${visibleStrips.length}`;
+  if (counterEl) counterEl.textContent = `${nextIdx + 1} — ${visibleStrips.length}`;
   if (thumbImg) thumbImg.src = itemData.url;
 
   if (lightboxImg) {
