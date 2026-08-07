@@ -1793,15 +1793,15 @@ html, body {
     color: #ffffff !important;
   }
 
-  /* ── Gallery Images Div (Responsive Track Height & Tall Filmstrip Crops) ── */
+  /* ── Gallery Images Div (Responsive Track Height & Sleek Strips) ── */
   .pf-scroll-wrap--strip {
     position: absolute !important;
-    top: 126px !important; /* Below top category tabs */
-    bottom: 115px !important; /* Above bottom caption and glass pill */
+    top: 120px !important; /* Cleanly below top category tabs */
+    bottom: 130px !important; /* Generous breathing room above bottom pill box */
     left: 0 !important;
     right: 0 !important;
     width: 100vw !important;
-    height: calc(100vh - 241px) !important;
+    height: calc(100vh - 250px) !important;
     display: flex !important;
     align-items: center !important;
     overflow-x: auto !important;
@@ -1814,25 +1814,26 @@ html, body {
     flex-direction: row !important;
     align-items: center !important;
     padding: 0 16px !important;
-    gap: 10px !important; /* Exact uniform gaps between images */
+    gap: 8px !important; /* Uniform gap between image strips */
     width: max-content !important;
     height: 100% !important;
     aspect-ratio: none !important;
   }
 
-  /* Tall narrow filmstrip ratio with thin black border matching exact reference image */
+  /* Reduced width & height sleek filmstrip with NO solid black border */
   .pf-gallery--strip .pf-item--strip {
     height: 100% !important;
-    aspect-ratio: 1 / 4.8 !important;
+    max-height: 440px !important;
+    aspect-ratio: 1 / 4.4 !important;
     flex: 0 0 auto !important;
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    border: 1.5px solid #000000 !important; /* Thin crisp black border */
-    border-radius: 0px !important; /* Sharp corners like reference image */
+    border: none !important; /* Completely remove solid black border */
+    border-radius: 0px !important;
     overflow: hidden !important;
-    box-shadow: none !important;
-    background: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+    background: #f0f0f0 !important;
   }
 
   .pf-gallery--strip .pf-img {
