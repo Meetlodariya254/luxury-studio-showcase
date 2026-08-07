@@ -1969,7 +1969,15 @@ html, body {
     text-transform: uppercase !important;
   }
 
-  .pf-glass-pill .pill-right,
+  /* Mobile Pill Right Container & Layout Button */
+  .pf-glass-pill .pill-right {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    height: 56px !important;
+    width: auto !important;
+  }
+
   .pill-layout-toggle {
     height: 56px !important;
     max-height: 56px !important;
@@ -1999,9 +2007,10 @@ html, body {
   .pill-layout-toggle:hover,
   .pill-layout-toggle.active,
   .pf-glass-pill.is-hovered .pill-layout-toggle {
-    width: 110px !important;
-    min-width: 110px !important;
+    width: 124px !important;
+    min-width: 124px !important;
     border-radius: 28px !important;
+    justify-content: center !important;
   }
 
   .layout-icon-svg {
@@ -2026,10 +2035,11 @@ html, body {
     visibility: hidden !important;
     display: none !important;
     font-family: 'Outfit', 'Inter', sans-serif !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
-    letter-spacing: 0.1em !important;
+    letter-spacing: 0.14em !important;
     color: #ffffff !important;
+    text-transform: uppercase !important;
     white-space: nowrap !important;
     position: static !important;
   }
