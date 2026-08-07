@@ -758,15 +758,15 @@ function toggleLayout(layout) {
 function handleVerticalAbsorbScroll() {
   if (currentLayout !== 'list') return;
   const items = document.querySelectorAll('.pf-gallery--list .pf-item--strip:not([style*="display: none"])');
-  // Sticky top offset (we'll set top: 10vh in CSS)
-  const stickyTop = window.innerHeight * 0.10;
+  const isMob = window.innerWidth <= 768;
+  const stickyTop = isMob ? 130 : window.innerHeight * 0.10;
   
   items.forEach((item, i) => {
     const rect = item.getBoundingClientRect();
     const imgWrap = item.querySelector('.pf-img-wrap');
     if (!imgWrap) return;
 
-    if (rect.top <= stickyTop + 2) {
+    if (rect.top <= stickyTop + 4) {
       const nextItem = items[i + 1];
       if (nextItem) {
         const nextRect = nextItem.getBoundingClientRect();
@@ -784,11 +784,11 @@ function handleVerticalAbsorbScroll() {
         imgWrap.style.transformOrigin = 'top center';
       } else {
         imgWrap.style.transform = 'scale(1)';
-        imgWrap.style.filter = 'brightness(1)';
+        imgWrap.style.filter = '';
       }
     } else {
       imgWrap.style.transform = 'scale(1)';
-      imgWrap.style.filter = 'brightness(1)';
+      imgWrap.style.filter = '';
     }
   });
 }

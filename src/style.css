@@ -1726,7 +1726,8 @@ html, body {
 .pf-gallery--list .pf-img-wrap {
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 .pf-click-note {
@@ -1867,13 +1868,13 @@ html, body {
 
   /* List layout on mobile */
   .pf-scroll-wrap--list {
-    top: 68px !important;
-    height: calc(100vh - 68px) !important;
+    top: 0 !important;
+    height: 100vh !important;
   }
 
   .pf-gallery--list {
-    padding: 16px 0 160px 0 !important;
-    gap: 20px !important;
+    padding: 140px 0 200px 0 !important;
+    gap: 40px !important;
   }
 
   .pf-gallery--list .pf-item--strip {
@@ -1881,10 +1882,22 @@ html, body {
     max-width: 440px !important;
     aspect-ratio: 2560 / 1708 !important;
     height: auto !important;
-    position: relative !important;
-    top: 0 !important;
-    border-radius: 8px !important;
-    border: 1.5px solid #000000 !important;
+    position: sticky !important;
+    top: 130px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform-origin: top center;
+    will-change: transform;
+  }
+
+  .pf-gallery--list .pf-img-wrap {
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    overflow: hidden !important;
   }
 
   /* ── Lower Control Bar / Pills Alignment & Styling ── */
