@@ -327,13 +327,11 @@ export function buildPortfolioDOM(container) {
       setTimeout(() => updatePillHoverState(false), 1200);
     }, { passive: true });
 
-    ['click', 'pointerdown'].forEach(evt => {
-      layoutToggleBtn.addEventListener(evt, (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
-        toggleLayout(newLayout);
-      });
+    layoutToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
+      toggleLayout(newLayout);
     });
   }
 

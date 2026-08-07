@@ -1580,60 +1580,61 @@ html, body {
   height: 56px;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   position: relative;
 }
 
-.pill-layout-toggle:hover {
+.pill-layout-toggle * {
+  pointer-events: none !important;
+}
+
+.pill-layout-toggle:hover,
+.pill-layout-toggle.active {
   width: 120px;
   border-radius: 28px;
 }
 
-.layout-icon {
+.layout-icon-svg {
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
-  transition: opacity 0.3s;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  opacity: 1;
+  visibility: visible;
+  color: inherit;
 }
 
-.layout-icon::before, .layout-icon::after {
-  content: '';
-  width: 5px;
-  height: 14px;
-  border: 2px solid #fff;
-}
-.layout-icon::before {
-  border-right: none;
-  border-radius: 2px 0 0 2px;
-  margin-right: 4px;
-}
-.layout-icon::after {
-  border-left: none;
-  border-radius: 0 2px 2px 0;
-}
-
-.pill-layout-toggle:hover .layout-icon {
-  opacity: 0;
-  pointer-events: none;
+.pill-layout-toggle:hover .layout-icon-svg,
+.pill-layout-toggle.active .layout-icon-svg,
+.pf-glass-pill.is-hovered .layout-icon-svg {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
 }
 
 .layout-label {
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
+  visibility: hidden;
+  display: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
   position: absolute;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Outfit', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.15em;
-  color: #fff;
+  color: inherit;
   white-space: nowrap;
 }
 
-.pill-layout-toggle:hover .layout-label {
-  opacity: 1;
+.pill-layout-toggle:hover .layout-label,
+.pill-layout-toggle.active .layout-label,
+.pf-glass-pill.is-hovered .layout-label {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  position: relative !important;
 }
 
 /* Close Button in Lightbox Mode */
@@ -1752,7 +1753,7 @@ html, body {
 
   /* Top Category Menu Bar on Mobile */
   .pf-menubar {
-    top: 68px !important; /* Positioned cleanly below top-right Back button */
+    top: 86px !important; /* Positioned cleanly below top-right Back button */
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: 94% !important;
@@ -1954,11 +1955,19 @@ html, body {
     position: relative !important;
     overflow: hidden !important;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    gap: 8px !important;
+    gap: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
     align-self: center !important;
+  }
+
+  .pill-layout-toggle:hover,
+  .pill-layout-toggle.active,
+  .pf-glass-pill.is-hovered .pill-layout-toggle {
+    width: 110px !important;
+    min-width: 110px !important;
+    border-radius: 28px !important;
   }
 
   .layout-icon-svg {
@@ -1967,10 +1976,36 @@ html, body {
     justify-content: center !important;
     color: #181818 !important;
     flex-shrink: 0 !important;
+    transition: opacity 0.25s ease, visibility 0.25s ease !important;
+  }
+
+  .pill-layout-toggle:hover .layout-icon-svg,
+  .pill-layout-toggle.active .layout-icon-svg,
+  .pf-glass-pill.is-hovered .layout-icon-svg {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    display: none !important;
   }
 
   .layout-label {
+    opacity: 0 !important;
+    visibility: hidden !important;
     display: none !important;
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    color: #181818 !important;
+    white-space: nowrap !important;
+    position: static !important;
+  }
+
+  .pill-layout-toggle:hover .layout-label,
+  .pill-layout-toggle.active .layout-label,
+  .pf-glass-pill.is-hovered .layout-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
   }
 
   .pf-click-note {
