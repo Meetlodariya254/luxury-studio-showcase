@@ -1729,60 +1729,79 @@ html, body {
   .pf-back-btn {
     display: flex !important;
     position: fixed !important;
-    top: 20px !important;
+    top: 18px !important;
     right: 16px !important;
-    padding: 10px 18px !important;
-    font-size: 11px !important;
+    padding: 10px 22px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
     z-index: 450 !important;
-    background: rgba(0, 0, 0, 0.08) !important;
-    border: 1px solid rgba(0, 0, 0, 0.15) !important;
-    color: #1a1a1a !important;
+    background: #ffffff !important;
+    border: 1.5px solid #181818 !important;
+    color: #181818 !important;
     border-radius: 9999px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', 'Outfit', sans-serif !important;
     align-items: center !important;
     gap: 8px !important;
     cursor: pointer !important;
     pointer-events: auto !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
   }
   .pf-back-btn:hover {
-    background: rgba(0, 0, 0, 0.15) !important;
+    background: #f0f0f0 !important;
   }
 
   /* Top Category Menu Bar on Mobile */
   .pf-menubar {
-    top: 64px !important; /* Positioned cleanly below the top-right Back button */
+    top: 68px !important; /* Positioned cleanly below top-right Back button */
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: 94% !important;
-    max-width: 420px !important;
+    max-width: 440px !important;
     z-index: 400 !important;
   }
 
   .pf-menubar-inner {
     width: 100% !important;
     justify-content: space-between !important;
-    padding: 3px !important;
+    padding: 4px !important;
+    background: #ffffff !important;
+    border: 1.5px solid #181818 !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
     overflow: hidden !important;
   }
 
+  .pf-menu-slider {
+    background: #181818 !important;
+    border-radius: 9999px !important;
+    top: 4px !important;
+    height: calc(100% - 8px) !important;
+  }
+
   .pf-menu-btn {
-    padding: 6px 4px !important;
+    padding: 7px 4px !important;
     font-size: 9px !important;
-    letter-spacing: 0.04em !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    color: #333333 !important;
     flex: 1 !important;
     text-align: center !important;
     white-space: nowrap !important;
   }
 
+  .pf-menu-btn.active {
+    color: #ffffff !important;
+  }
+
   /* ── Gallery Images Div (Responsive Track Height & Tall Filmstrip Crops) ── */
   .pf-scroll-wrap--strip {
     position: absolute !important;
-    top: 108px !important; /* Below top category tabs */
-    bottom: 110px !important; /* Above bottom caption and glass pill */
+    top: 126px !important; /* Below top category tabs */
+    bottom: 115px !important; /* Above bottom caption and glass pill */
     left: 0 !important;
     right: 0 !important;
     width: 100vw !important;
-    height: calc(100vh - 218px) !important;
+    height: calc(100vh - 241px) !important;
     display: flex !important;
     align-items: center !important;
     overflow-x: auto !important;
@@ -1795,23 +1814,25 @@ html, body {
     flex-direction: row !important;
     align-items: center !important;
     padding: 0 16px !important;
-    gap: 8px !important;
+    gap: 10px !important; /* Exact uniform gaps between images */
     width: max-content !important;
     height: 100% !important;
     aspect-ratio: none !important;
   }
 
-  /* Tall narrow filmstrip ratio (roughly 1:5 width:height) filling full available height */
+  /* Tall narrow filmstrip ratio with thin black border matching exact reference image */
   .pf-gallery--strip .pf-item--strip {
     height: 100% !important;
-    aspect-ratio: 1 / 5.2 !important;
+    aspect-ratio: 1 / 4.8 !important;
     flex: 0 0 auto !important;
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    border-radius: 4px !important;
+    border: 1.5px solid #000000 !important; /* Thin crisp black border */
+    border-radius: 0px !important; /* Sharp corners like reference image */
     overflow: hidden !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
   }
 
   .pf-gallery--strip .pf-img {
@@ -1822,8 +1843,8 @@ html, body {
 
   /* List layout on mobile */
   .pf-scroll-wrap--list {
-    top: 64px !important;
-    height: calc(100vh - 64px) !important;
+    top: 68px !important;
+    height: calc(100vh - 68px) !important;
   }
 
   .pf-gallery--list {
@@ -1838,49 +1859,47 @@ html, body {
     height: auto !important;
     position: relative !important;
     top: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #000000 !important;
   }
 
   /* ── Lower Control Bar / Pills Alignment & Styling ── */
   .pf-glass-pill {
     position: fixed !important;
-    bottom: 24px !important;
+    bottom: 38px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 10px !important;
+    gap: 12px !important;
     z-index: 1005 !important;
     width: auto !important;
-    height: 52px !important;
+    height: 56px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
   }
 
-
-
   /* Center Category / Mode Pill */
   .pf-glass-pill .pill-left {
-    height: 52px !important;
-    max-height: 52px !important;
-    border-radius: 14px !important;
-    background: rgba(190, 190, 190, 0.5) !important;
-    backdrop-filter: blur(28px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    height: 56px !important;
+    max-height: 56px !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    border: 1.5px solid #181818 !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
     display: flex !important;
     align-items: center !important;
-    padding: 0 18px 0 6px !important;
-    gap: 10px !important;
+    padding: 0 20px 0 6px !important;
+    gap: 12px !important;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    min-width: 175px !important;
+    min-width: 210px !important;
     align-self: center !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+    color: #181818 !important;
   }
 
   .pill-gallery-info {
@@ -1890,18 +1909,43 @@ html, body {
     width: 100% !important;
   }
 
+  .pill-thumb-circle {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    border: 1.5px solid #181818 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pill-cat-text .pill-label {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #181818 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .pill-cat-text .pill-value {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #181818 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+  }
+
   .pf-glass-pill .pill-right,
   .pill-layout-toggle {
-    height: 52px !important;
-    max-height: 52px !important;
-    width: 52px !important;
-    min-width: 52px !important;
+    height: 56px !important;
+    max-height: 56px !important;
+    width: 56px !important;
+    min-width: 56px !important;
     border-radius: 50% !important;
-    background: rgba(190, 190, 190, 0.5) !important;
-    backdrop-filter: blur(28px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    background: #ffffff !important;
+    border: 1.5px solid #181818 !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1910,59 +1954,37 @@ html, body {
     overflow: hidden !important;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
     gap: 8px !important;
-    padding: 0 14px !important;
+    padding: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
     align-self: center !important;
-  }
-
-  /* Hover / Active expanded state for Right Layout Button */
-  .pill-layout-toggle:hover,
-  .pill-layout-toggle.active,
-  .pf-glass-pill.is-hovered .pill-layout-toggle {
-    width: 124px !important;
-    border-radius: 14px !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, rgba(165, 65, 45, 0.88), rgba(115, 40, 30, 0.88)) !important;
-    border-color: rgba(255, 255, 255, 0.7) !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), 0 0 20px rgba(180, 60, 40, 0.4) !important;
   }
 
   .layout-icon-svg {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #ffffff !important;
+    color: #181818 !important;
     flex-shrink: 0 !important;
   }
 
   .layout-label {
     display: none !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.08em !important;
-    color: #ffffff !important;
-    white-space: nowrap !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    position: static !important;
-  }
-
-  .pill-layout-toggle:hover .layout-label,
-  .pill-layout-toggle.active .layout-label,
-  .pf-glass-pill.is-hovered .layout-label {
-    display: inline-block !important;
   }
 
   .pf-click-note {
-    bottom: 86px !important;
+    bottom: 14px !important;
+    font-family: 'Outfit', 'Inter', sans-serif !important;
     font-size: 10px !important;
-    letter-spacing: 0.15em !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    color: #555 !important;
+    color: #181818 !important;
+    opacity: 0.9 !important;
   }
+
   .pf-lightbox-close { top: 20px; left: 20px; right: auto; width: 40px; height: 40px; }
   .pf-lightbox-prev { left: 16px; width: 44px; height: 44px; }
   .pf-lightbox-next { right: 16px; width: 44px; height: 44px; }
 }
+
