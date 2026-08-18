@@ -86,10 +86,12 @@ const portfolioData = [
 const allItems = [];
 portfolioData.forEach(group => {
   group.images.forEach((url, idx) => {
-    // Generate ultra-high resolution version without cropping for lightbox view
-    const fullUrl = url.replace(/w=\d+/, 'w=2200').replace(/q=\d+/, 'q=95');
+    // Optimized thumbnail for strip view
+    const thumbUrl = url.replace(/w=\d+/, 'w=600').replace(/q=\d+/, 'q=75');
+    // High resolution version for lightbox view (preloaded on click)
+    const fullUrl = url.replace(/w=\d+/, 'w=1600').replace(/q=\d+/, 'q=85');
     allItems.push({
-      url,
+      url: thumbUrl,
       fullUrl,
       category: group.category,
       title: group.title,
@@ -192,9 +194,12 @@ export function buildPortfolioDOM(container) {
     img.src = item.url;
     img.alt = `${item.title} ${item.index + 1}`;
     img.className = 'pf-img';
-    // Use eager loading so images show instantly
-    img.loading = 'eager';
+    // Initial visible cards load eagerly; subsequent cards load lazily to save mobile bandwidth
+    img.loading = i < 6 ? 'eager' : 'lazy';
     img.decoding = 'async';
+    if (i < 4) {
+      img.fetchPriority = 'high';
+    }
 
     const overlay = document.createElement('div');
     overlay.className = 'pf-strip-overlay';

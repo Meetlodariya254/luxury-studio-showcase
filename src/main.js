@@ -18,14 +18,14 @@ const SECTIONS = [
     title: 'HOME',
     subtitle: 'Vishal Shah — Visual Artist & Photographer',
     bgTheme: '#f6f3f6',
-    thumb: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=300&q=80',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1200&q=80',
+    thumb: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=240&q=75',
+    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=75',
     content: `
       <h2 class="modal-title">Vision & Light</h2>
       <p class="modal-subtitle">Vishal Shah captures the evocative interplay between natural light and architectural form. Based in Ahmedabad, Gujarat, Vishal's work spans across timeless wedding stories and fine art portraits.</p>
       <div class="modal-grid">
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Shot 1"></div>
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80" alt="Shot 2"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=75" alt="Shot 1" loading="lazy"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=75" alt="Shot 2" loading="lazy"></div>
       </div>
     `
   },
@@ -34,14 +34,14 @@ const SECTIONS = [
     title: 'ABOUT',
     subtitle: 'Biography & Artist Statement',
     bgTheme: '#f3f5f8',
-    thumb: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80',
+    thumb: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=75',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=75',
     content: `
       <h2 class="modal-title">About Vishal Shah</h2>
       <p class="modal-subtitle">With 8+ years behind the lens, Vishal focuses on emotive storytelling. Based in Ahmedabad, Gujarat, Vishal crafts compelling visuals for weddings, portraits, and timeless celebrations across India and abroad.</p>
       <div class="modal-grid">
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" alt="Portrait"></div>
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" alt="Studio"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=75" alt="Portrait" loading="lazy"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=75" alt="Studio" loading="lazy"></div>
       </div>
     `
   },
@@ -50,16 +50,16 @@ const SECTIONS = [
     title: 'PORTFOLIO',
     subtitle: 'Selected Works (2018 — 2026)',
     bgTheme: '#f5f3f0',
-    thumb: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&q=80',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
+    thumb: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=240&q=75',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=75',
     content: `
       <h2 class="modal-title">Selected Archives</h2>
       <p class="modal-subtitle">An ongoing exploration of weddings, intimate portraits, and timeless stories across India and abroad.</p>
       <div class="modal-grid">
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80" alt="Arch 1"></div>
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80" alt="Nature"></div>
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Portrait 2"></div>
-        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80" alt="Fashion"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=75" alt="Arch 1" loading="lazy"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=500&q=75" alt="Nature" loading="lazy"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=75" alt="Portrait 2" loading="lazy"></div>
+        <div class="modal-img-card"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=500&q=75" alt="Fashion" loading="lazy"></div>
       </div>
     `
   },
@@ -68,8 +68,8 @@ const SECTIONS = [
     title: 'CONTACT',
     subtitle: 'Inquiries & Commissions',
     bgTheme: '#f2f6f5',
-    thumb: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+    thumb: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=240&q=75',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=75',
     content: `
       <h2 class="modal-title">Initiate Dialogue</h2>
       <p class="modal-subtitle">Available across India and abroad for weddings, portraits, and timeless stories. Reach out directly at hello@vishalshah.in</p>
@@ -117,14 +117,23 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const isMobileDevice = window.innerWidth <= 768;
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: !isMobileDevice,
+  alpha: true,
+  powerPreference: 'high-performance',
+  precision: isMobileDevice ? 'mediump' : 'highp'
+});
+const dprInit = Math.min(window.devicePixelRatio, isMobileDevice ? 1.25 : 1.75);
+renderer.setPixelRatio(dprInit);
 container.appendChild(renderer.domElement);
 
 let floorReflector;
 
 function adjustCameraForViewport() {
   const aspect = window.innerWidth / window.innerHeight;
+  const isMob = window.innerWidth <= 768;
   camera.aspect = aspect;
   if (aspect < 0.6) { // Portrait phone (e.g. iPhone / Android)
     camera.position.z = 15.5;
@@ -137,10 +146,13 @@ function adjustCameraForViewport() {
     camera.position.y = 0;
   }
   camera.updateProjectionMatrix();
+  const dpr = Math.min(window.devicePixelRatio, isMob ? 1.25 : 1.75);
+  renderer.setPixelRatio(dpr);
   renderer.setSize(window.innerWidth, window.innerHeight);
   if (floorReflector) {
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    floorReflector.getRenderTarget().setSize(Math.min(1024, window.innerWidth * dpr * 0.5), Math.min(1024, window.innerHeight * dpr * 0.5));
+    const rw = isMob ? Math.min(384, window.innerWidth * 0.7) : Math.min(1024, window.innerWidth * dpr * 0.5);
+    const rh = isMob ? Math.min(384, window.innerHeight * 0.7) : Math.min(1024, window.innerHeight * dpr * 0.5);
+    floorReflector.getRenderTarget().setSize(rw, rh);
   }
 }
 
@@ -309,15 +321,16 @@ const customReflectorShader = {
   `
 };
 
-const dprInit = Math.min(window.devicePixelRatio, 2);
+const reflectorW = isMobileDevice ? Math.min(384, window.innerWidth * 0.7) : Math.min(1024, window.innerWidth * dprInit * 0.5);
+const reflectorH = isMobileDevice ? Math.min(384, window.innerHeight * 0.7) : Math.min(1024, window.innerHeight * dprInit * 0.5);
 const floorGeometry = new THREE.PlaneGeometry(60, 60);
 floorReflector = new Reflector(floorGeometry, {
   clipBias: 0.003,
-  textureWidth: Math.min(1024, window.innerWidth * dprInit * 0.5),
-  textureHeight: Math.min(1024, window.innerHeight * dprInit * 0.5),
+  textureWidth: reflectorW,
+  textureHeight: reflectorH,
   color: 0xffffff,
   shader: customReflectorShader,
-  multisample: 4
+  multisample: isMobileDevice ? 0 : 2
 });
 
 floorReflector.rotation.x = -Math.PI / 2;
@@ -537,6 +550,12 @@ function openContactPage() {
   triggerShatter(3);
   contactPage.classList.add('active');
   showGlobalBack(closeContactPage);
+
+  // Lazy-load the Google Maps iframe only when user opens Contact page
+  const mapIframe = contactPage.querySelector('.contact-map-iframe');
+  if (mapIframe && mapIframe.dataset.src && !mapIframe.src) {
+    mapIframe.src = mapIframe.dataset.src;
+  }
 
   const cards = contactPage.querySelectorAll('.contact-anim-card');
   gsap.fromTo(cards,
@@ -910,14 +929,17 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
   
-  if (isAnyPageOpen()) {
+  if (document.hidden || isAnyPageOpen()) {
     return;
   }
   
   const elapsedTime = clock.getElapsedTime();
   
   // Smooth continuous rotation damping / lerp for both modes
-  currentRotation += (targetRotation - currentRotation) * 0.08;
+  const rotDiff = targetRotation - currentRotation;
+  if (Math.abs(rotDiff) > 0.00001) {
+    currentRotation += rotDiff * 0.08;
+  }
   
   if (isEntranceAnimateDone) {
     const p = modeProgress.val;
@@ -1004,19 +1026,19 @@ if (loaderOverlay) {
   let progress = { val: 0 };
   gsap.to(progress, {
     val: 100,
-    duration: 2.4,
-    ease: 'power2.inOut',
+    duration: 0.65,
+    ease: 'power1.inOut',
     onUpdate: () => {
       const p = Math.round(progress.val);
       if (loaderCounter) loaderCounter.textContent = `${p}%`;
       if (loaderBar) loaderBar.style.width = `${p}%`;
     },
     onComplete: () => {
-      // Fade out preloader overlay
+      // Fade out preloader overlay quickly so content is interactive immediately
       gsap.to(loaderOverlay, {
         opacity: 0,
-        duration: 0.8,
-        ease: 'power3.inOut',
+        duration: 0.4,
+        ease: 'power2.out',
         onComplete: () => {
           if (loaderOverlay && loaderOverlay.parentNode) {
             loaderOverlay.parentNode.removeChild(loaderOverlay);
@@ -1026,22 +1048,22 @@ if (loaderOverlay) {
 
       // Swoosh cards from flat unrolled state into 3D cylinder formation
       meshes.forEach((m, idx) => {
-        gsap.to(m.position, { x: 0, y: 0, z: 0, duration: 1.8, ease: 'power3.out', stagger: 0.1 });
-        gsap.to(m.rotation, { x: 0, y: idx * arcAngle, z: 0, duration: 1.8, ease: 'power3.out', stagger: 0.1 });
-        gsap.to(m.scale, { x: 1, y: 1, z: 1, duration: 1.8, ease: 'power3.out', stagger: 0.1 });
-        gsap.to(m.material, { opacity: 1, duration: 1.2, ease: 'power2.out', stagger: 0.1 });
+        gsap.to(m.position, { x: 0, y: 0, z: 0, duration: 1.4, ease: 'power3.out', stagger: 0.06 });
+        gsap.to(m.rotation, { x: 0, y: idx * arcAngle, z: 0, duration: 1.4, ease: 'power3.out', stagger: 0.06 });
+        gsap.to(m.scale, { x: 1, y: 1, z: 1, duration: 1.4, ease: 'power3.out', stagger: 0.06 });
+        gsap.to(m.material, { opacity: 1, duration: 1.0, ease: 'power2.out', stagger: 0.06 });
       });
 
       // Tilt cylinder smoothly into position
-      gsap.to(cylinderGroup.rotation, { x: 0.08, y: 0, z: -0.03, duration: 2.0, ease: 'power3.out', onComplete: () => {
+      gsap.to(cylinderGroup.rotation, { x: 0.08, y: 0, z: -0.03, duration: 1.6, ease: 'power3.out', onComplete: () => {
         isEntranceAnimateDone = true;
       }});
 
       // Stagger reveal UI components
-      gsap.to('#bg-title', { opacity: 1, scale: 1, yPercent: -50, duration: 1.4, delay: 0.2, ease: 'power2.out' });
-      gsap.to('.g-header', { opacity: 1, y: 0, duration: 1.2, delay: 0.4, ease: 'power2.out' });
-      gsap.to('.bottom-controls-bar', { opacity: 1, y: 0, duration: 1.2, delay: 0.5, ease: 'power2.out' });
-      gsap.to('.drag-hint', { opacity: 0.7, duration: 1.2, delay: 0.9 });
+      gsap.to('#bg-title', { opacity: 1, scale: 1, yPercent: -50, duration: 1.0, delay: 0.1, ease: 'power2.out' });
+      gsap.to('.g-header', { opacity: 1, y: 0, duration: 0.9, delay: 0.2, ease: 'power2.out' });
+      gsap.to('.bottom-controls-bar', { opacity: 1, y: 0, duration: 0.9, delay: 0.25, ease: 'power2.out' });
+      gsap.to('.drag-hint', { opacity: 0.7, duration: 1.0, delay: 0.4 });
     }
   });
 }
