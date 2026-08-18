@@ -1304,6 +1304,10 @@ html, body {
   padding: 8px 18px;
   border-radius: 9999px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: none !important;
 }
@@ -1503,22 +1507,29 @@ html, body {
 .pf-glass-pill .pill-left {
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 22px 0 10px;
   height: 56px;
-  border-radius: 12px;
+  border-radius: 16px;
   transition: all 0.4s ease;
+  min-width: 220px;
+  box-sizing: border-box;
 }
 
 .pill-gallery-info {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
 }
 
 .pill-cat-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
+  flex: 1;
   line-height: 1.2;
 }
 
@@ -1528,14 +1539,19 @@ html, body {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
   letter-spacing: 0.05em;
+  text-align: center;
+  width: 100%;
 }
 
 .pill-cat-text .pill-value {
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
 }
 
 .pill-thumb-circle {
@@ -1836,6 +1852,9 @@ html, body {
     letter-spacing: 0.05em !important;
     color: #333333 !important;
     flex: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     text-align: center !important;
     white-space: nowrap !important;
   }
@@ -1958,7 +1977,7 @@ html, body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
     display: flex !important;
     align-items: center !important;
-    padding: 0 20px 0 6px !important;
+    padding: 0 16px 0 6px !important;
     gap: 12px !important;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
     min-width: 210px !important;
@@ -1971,7 +1990,8 @@ html, body {
   .pill-gallery-info {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    justify-content: center !important;
+    gap: 12px !important;
     width: 100% !important;
   }
 
@@ -1992,21 +2012,35 @@ html, body {
     object-position: center 25% !important;
   }
 
+  .pill-cat-text {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    flex: 1 !important;
+    line-height: 1.2 !important;
+  }
+
   .pill-cat-text .pill-label {
     font-family: 'Outfit', 'Inter', sans-serif !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 500 !important;
     color: rgba(255, 255, 255, 0.85) !important;
     letter-spacing: 0.02em !important;
+    text-align: center !important;
+    width: 100% !important;
   }
 
   .pill-cat-text .pill-value {
     font-family: 'Outfit', 'Inter', sans-serif !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
     letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
+    text-align: center !important;
+    width: 100% !important;
   }
 
   /* Mobile Pill Right Container & Layout Button */
@@ -2044,7 +2078,6 @@ html, body {
     color: #ffffff !important;
   }
 
-  .pill-layout-toggle:hover,
   .pill-layout-toggle.active,
   .pf-glass-pill.is-hovered .pill-layout-toggle {
     width: 124px !important;
@@ -2062,7 +2095,6 @@ html, body {
     transition: opacity 0.25s ease, visibility 0.25s ease !important;
   }
 
-  .pill-layout-toggle:hover .layout-icon-svg,
   .pill-layout-toggle.active .layout-icon-svg,
   .pf-glass-pill.is-hovered .layout-icon-svg {
     opacity: 0 !important;
@@ -2084,7 +2116,6 @@ html, body {
     position: static !important;
   }
 
-  .pill-layout-toggle:hover .layout-label,
   .pill-layout-toggle.active .layout-label,
   .pf-glass-pill.is-hovered .layout-label {
     opacity: 1 !important;

@@ -43,9 +43,9 @@ const portfolioData = [
       'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1545232972-9bdae8587396?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1519225336804-91fe1b6dc63c?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80'
     ]
   },
   {
@@ -76,7 +76,7 @@ const portfolioData = [
       'https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1518173946687-a4c8a683392e?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80'
     ]
   }
@@ -104,6 +104,7 @@ let currentCategory = 'all';
 let currentCategoryTitle = 'ALL ARCHIVES';
 let currentLayout = 'grid'; // 'grid' | 'list'
 let isLightboxOpen = false;
+let isFiltering = false;
 let activeStripEl = null;
 let singleSetWidth = 0;
 
@@ -301,6 +302,8 @@ export function buildPortfolioDOM(container) {
   glassPill.querySelector('#pill-prev-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(-1); });
   glassPill.querySelector('#pill-next-btn')?.addEventListener('click', (e) => { e.stopPropagation(); navigateLightbox(1); });
   
+  let mobileLayoutTimer = null;
+
   const updatePillHoverState = (isHovered) => {
     const glassPillEl = document.getElementById('pf-glass-pill');
     const layoutBtn = document.getElementById('pill-layout-toggle');
@@ -326,22 +329,40 @@ export function buildPortfolioDOM(container) {
 
   const layoutToggleBtn = glassPill.querySelector('#pill-layout-toggle');
   if (layoutToggleBtn) {
-    ['mouseenter', 'pointerenter', 'touchstart'].forEach(evt => {
-      layoutToggleBtn.addEventListener(evt, () => updatePillHoverState(true), { passive: true });
+    // Desktop mouse hover events
+    layoutToggleBtn.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(hover: hover)').matches) {
+        updatePillHoverState(true);
+      }
     });
-    ['mouseleave', 'pointerleave'].forEach(evt => {
-      layoutToggleBtn.addEventListener(evt, () => updatePillHoverState(false), { passive: true });
-    });
-    layoutToggleBtn.addEventListener('touchend', () => {
-      setTimeout(() => updatePillHoverState(false), 1200);
-    }, { passive: true });
 
-    layoutToggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+    layoutToggleBtn.addEventListener('mouseleave', () => {
+      if (window.matchMedia('(hover: hover)').matches) {
+        updatePillHoverState(false);
+      }
+    });
+
+    // Toggle layout on click / tap
+    const triggerLayoutToggle = (e) => {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       const newLayout = currentLayout === 'grid' ? 'list' : 'grid';
       toggleLayout(newLayout);
-    });
+
+      // Show layout button state & name for 1 second, then revert back to icon symbol
+      updatePillHoverState(true);
+      if (mobileLayoutTimer) clearTimeout(mobileLayoutTimer);
+      mobileLayoutTimer = setTimeout(() => {
+        const isHoveringDesktop = window.matchMedia('(hover: hover)').matches && layoutToggleBtn.matches(':hover');
+        if (!isHoveringDesktop) {
+          updatePillHoverState(false);
+        }
+      }, 1000);
+    };
+
+    layoutToggleBtn.addEventListener('click', triggerLayoutToggle);
   }
 
   // Initialize gallery thumb with first image
@@ -362,6 +383,7 @@ export function buildPortfolioDOM(container) {
 
 /* ─── Infinite Horizontal Scroll Handler ─────────────────────────── */
 function handleInfiniteHorizontalScroll() {
+  if (isFiltering || currentLayout !== 'grid') return;
   const scrollWrap = document.getElementById('pf-scroll-wrap');
   const gallery = document.getElementById('pf-gallery');
   if (!scrollWrap || !gallery) return;
@@ -372,8 +394,8 @@ function handleInfiniteHorizontalScroll() {
   const currentScroll = scrollWrap.scrollLeft;
   if (currentScroll >= singleSetWidth) {
     scrollWrap.scrollLeft = currentScroll - singleSetWidth;
-  } else if (currentScroll <= 0) {
-    scrollWrap.scrollLeft = singleSetWidth;
+  } else if (currentScroll < 0) {
+    scrollWrap.scrollLeft = singleSetWidth + currentScroll;
   }
 }
 
@@ -421,8 +443,23 @@ function initStripInteractions() {
 
 /* ─── Category Filtering (Ultra-Smooth Sliding Pill + Accordion) ─── */
 function filterCategory(categoryKey, targetBtn) {
-  if (currentCategory === categoryKey) return;
+  const isSameCategory = currentCategory === categoryKey;
+  
+  if (isSameCategory) {
+    // If user clicks the currently active category, smoothly scroll back to the first image
+    const scrollWrap = document.getElementById('pf-scroll-wrap');
+    if (scrollWrap) {
+      if (currentLayout === 'grid') {
+        gsap.to(scrollWrap, { scrollLeft: 0, duration: 0.5, ease: 'power3.out' });
+      } else {
+        gsap.to(scrollWrap, { scrollTop: 0, duration: 0.5, ease: 'power3.out' });
+      }
+    }
+    return;
+  }
+
   currentCategory = categoryKey;
+  isFiltering = true;
 
   // Update sliding indicator pill position
   if (targetBtn) {
@@ -441,13 +478,42 @@ function filterCategory(categoryKey, targetBtn) {
     }
   }
 
+  // Update bottom pill gallery thumb to the first image of the selected category
+  let firstItemImg = '';
+  if (categoryKey === 'all') {
+    firstItemImg = portfolioData[0]?.images[0] || '';
+  } else {
+    const catGroup = portfolioData.find(g => g.category === categoryKey);
+    if (catGroup && catGroup.images.length > 0) {
+      firstItemImg = catGroup.images[0];
+    }
+  }
+  const galleryThumb = document.getElementById('pill-gallery-thumb');
+  if (galleryThumb && firstItemImg) {
+    galleryThumb.src = firstItemImg;
+  }
+
   document.querySelectorAll('.pf-menu-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-filter') === categoryKey);
   });
 
+  const scrollWrap = document.getElementById('pf-scroll-wrap');
+  if (scrollWrap) {
+    gsap.killTweensOf(scrollWrap);
+    // Reset scroll immediately so it always displays from the first image of the selected category
+    if (currentLayout === 'grid') {
+      scrollWrap.scrollLeft = 0;
+    } else {
+      scrollWrap.scrollTop = 0;
+    }
+  }
+
   const items = document.querySelectorAll('.pf-item--strip');
+  let finishedCount = 0;
+  const total = items.length;
 
   items.forEach(item => {
+    gsap.killTweensOf(item);
     const match = categoryKey === 'all' || item.getAttribute('data-category') === categoryKey;
     if (match) {
       if (item.style.display === 'none') {
@@ -455,13 +521,22 @@ function filterCategory(categoryKey, targetBtn) {
         gsap.set(item, { flexBasis: 0, width: 0, opacity: 0, scale: 0.85, margin: 0 });
       }
       gsap.to(item, {
-        flexBasis: 160,
-        width: 160,
+        flexBasis: currentLayout === 'grid' ? 160 : '',
+        width: currentLayout === 'grid' ? 160 : '',
         opacity: 1,
         scale: 1,
         margin: 0,
-        duration: 0.55,
-        ease: 'power3.inOut'
+        duration: 0.5,
+        ease: 'power3.out',
+        onComplete: () => {
+          finishedCount++;
+          if (finishedCount >= total) {
+            isFiltering = false;
+            if (scrollWrap && currentLayout === 'grid') {
+              scrollWrap.scrollLeft = 0;
+            }
+          }
+        }
       });
     } else {
       gsap.to(item, {
@@ -470,11 +545,18 @@ function filterCategory(categoryKey, targetBtn) {
         opacity: 0,
         scale: 0.85,
         margin: 0,
-        duration: 0.5,
+        duration: 0.35,
         ease: 'power3.inOut',
         onComplete: () => {
           if (currentCategory === categoryKey || categoryKey !== 'all') {
             item.style.display = 'none';
+          }
+          finishedCount++;
+          if (finishedCount >= total) {
+            isFiltering = false;
+            if (scrollWrap && currentLayout === 'grid') {
+              scrollWrap.scrollLeft = 0;
+            }
           }
         }
       });
@@ -741,7 +823,7 @@ function toggleLayout(layout) {
     
     // reset scroll for strip mode
     scrollWrap.scrollTop = 0;
-    scrollWrap.scrollLeft = singleSetWidth;
+    scrollWrap.scrollLeft = 0;
     
     // cleanup list inline styles
     const items = gallery.querySelectorAll('.pf-item--strip');
@@ -800,6 +882,25 @@ export function openPortfolioPage(triggerShatterFn) {
 
   const page = document.getElementById('portfolio-page');
   if (!page) return;
+
+  const scrollWrap = document.getElementById('pf-scroll-wrap');
+  if (scrollWrap) {
+    scrollWrap.scrollLeft = 0;
+    scrollWrap.scrollTop = 0;
+  }
+
+  // Ensure bottom capsule pill thumbnail matches the first image of current category
+  let firstThumbImg = '';
+  if (currentCategory === 'all') {
+    firstThumbImg = portfolioData[0]?.images[0] || '';
+  } else {
+    const catGroup = portfolioData.find(g => g.category === currentCategory);
+    firstThumbImg = catGroup?.images[0] || '';
+  }
+  const galleryThumb = document.getElementById('pill-gallery-thumb');
+  if (galleryThumb && firstThumbImg) {
+    galleryThumb.src = firstThumbImg;
+  }
 
   if (typeof triggerShatterFn === 'function') triggerShatterFn(2);
 
