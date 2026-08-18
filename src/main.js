@@ -89,7 +89,18 @@ let currentRotation = 0;
 let isDragging = false;
 let startX = 0;
 let previousX = 0;
-let rotationVelocity = 0;
+let rotationVelocity = 0; // Per-frame momentum velocity
+let isCoasting = false;   // True while cylinder is gliding after release
+
+// Friction constants — tune these for feel:
+const FRICTION = 0.88;          // Velocity multiplied each frame (lower = stops faster)
+const SWIPE_SENSITIVITY = 0.011; // radians per pixel dragged (higher = bigger arc per swipe)
+const SNAP_THRESHOLD = 0.0008;  // Min velocity before we snap to nearest panel
+
+// Recent velocity ring-buffer for accurate release speed sampling
+const VEL_SAMPLES = 4;
+const velBuffer = new Array(VEL_SAMPLES).fill(0);
+let velBufIdx = 0;
 
 // DOM Elements
 const bgTitle = document.getElementById('bg-title');
@@ -664,66 +675,71 @@ if (bottomBarEl) {
   });
 }
 
-// Mouse & Touch Drag Interaction
+// ── Momentum-Physics Drag System ────────────────────────────────────────
+
+function getAverageVelocity() {
+  return velBuffer.reduce((s, v) => s + v, 0) / VEL_SAMPLES;
+}
+
+function startDrag(clientX) {
+  isDragging = true;
+  isCoasting = false;
+  rotationVelocity = 0;
+  startX = clientX;
+  previousX = clientX;
+  velBuffer.fill(0);
+  velBufIdx = 0;
+}
+
+function moveDrag(clientX) {
+  if (!isDragging) return;
+  const deltaX = clientX - previousX;
+  previousX = clientX;
+  const rotDelta = deltaX * SWIPE_SENSITIVITY;
+  targetRotation += rotDelta;
+  currentRotation += rotDelta;
+  // Sample velocity for release momentum
+  velBuffer[velBufIdx % VEL_SAMPLES] = rotDelta;
+  velBufIdx++;
+}
+
+function endDrag() {
+  if (!isDragging) return;
+  isDragging = false;
+  // Launch coasting with the averaged recent velocity
+  rotationVelocity = getAverageVelocity();
+  isCoasting = Math.abs(rotationVelocity) > SNAP_THRESHOLD;
+  if (!isCoasting) {
+    // Tiny or no momentum — snap immediately
+    const snappedIndex = Math.round(-targetRotation / arcAngle);
+    targetRotation = -snappedIndex * arcAngle;
+    const normalizedIndex = ((snappedIndex % segments) + segments) % segments;
+    updateActiveSection(normalizedIndex);
+  }
+}
+
+// Mouse events
 window.addEventListener('mousedown', (e) => {
   if (isAnyPageOpen()) return;
   if (e.target.closest('.bottom-controls-bar') || e.target.closest('.glass-pill-nav') || e.target.closest('.mode-toggle-btn')) return;
-  isDragging = true;
-  startX = e.clientX;
-  previousX = e.clientX;
-  rotationVelocity = 0;
+  startDrag(e.clientX);
 });
+window.addEventListener('mousemove', (e) => { moveDrag(e.clientX); });
+window.addEventListener('mouseup', endDrag);
+window.addEventListener('mouseleave', endDrag);
 
-window.addEventListener('mousemove', (e) => {
-  if (!isDragging) return;
-  const deltaX = e.clientX - previousX;
-  previousX = e.clientX;
-  
-  const rotDelta = deltaX * 0.005;
-  targetRotation += rotDelta;
-  currentRotation += rotDelta;
-  rotationVelocity = rotDelta;
-});
-
-window.addEventListener('mouseup', () => {
-  if (!isDragging) return;
-  isDragging = false;
-  
-  const snappedIndex = Math.round(-targetRotation / arcAngle);
-  targetRotation = -snappedIndex * arcAngle;
-  
-  const normalizedIndex = ((snappedIndex % segments) + segments) % segments;
-  updateActiveSection(normalizedIndex);
-});
-
-// Touch support for mobile/tablet
+// Touch events
 window.addEventListener('touchstart', (e) => {
   if (isAnyPageOpen()) return;
   if (e.target.closest('.bottom-controls-bar') || e.target.closest('.glass-pill-nav') || e.target.closest('.mode-toggle-btn')) return;
-  isDragging = true;
-  startX = e.touches[0].clientX;
-  previousX = e.touches[0].clientX;
-  rotationVelocity = 0;
+  startDrag(e.touches[0].clientX);
 }, { passive: true });
-
 window.addEventListener('touchmove', (e) => {
   if (!isDragging) return;
-  const deltaX = e.touches[0].clientX - previousX;
-  previousX = e.touches[0].clientX;
-  
-  const rotDelta = deltaX * 0.005;
-  targetRotation += rotDelta;
-  currentRotation += rotDelta;
+  moveDrag(e.touches[0].clientX);
 }, { passive: true });
-
-window.addEventListener('touchend', () => {
-  if (!isDragging) return;
-  isDragging = false;
-  const snappedIndex = Math.round(-targetRotation / arcAngle);
-  targetRotation = -snappedIndex * arcAngle;
-  const normalizedIndex = ((snappedIndex % segments) + segments) % segments;
-  updateActiveSection(normalizedIndex);
-});
+window.addEventListener('touchend', endDrag);
+window.addEventListener('touchcancel', endDrag);
 
 // Click on page or canvas to open section
 window.addEventListener('click', (e) => {
@@ -762,9 +778,11 @@ window.addEventListener('wheel', (e) => {
   const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
   if (Math.abs(delta) < 2) return;
   
-  const rotDelta = delta * 0.003;
+  const rotDelta = delta * 0.004;
   targetRotation += rotDelta;
   currentRotation += rotDelta;
+  rotationVelocity = rotDelta * 0.5;
+  isCoasting = false; // wheel handles its own snap
   
   clearTimeout(wheelTimeout);
   wheelTimeout = setTimeout(() => {
@@ -772,7 +790,7 @@ window.addEventListener('wheel', (e) => {
     targetRotation = -snappedIndex * arcAngle;
     const normalizedIndex = ((snappedIndex % segments) + segments) % segments;
     updateActiveSection(normalizedIndex);
-  }, 120);
+  }, 140);
 }, { passive: true });
 
 // Resize Handler
@@ -935,10 +953,28 @@ function animate() {
   
   const elapsedTime = clock.getElapsedTime();
   
-  // Smooth continuous rotation damping / lerp for both modes
+  // ── Inertia Physics ──────────────────────────────────────────────────
+  if (isCoasting) {
+    // Apply friction each frame so the cylinder glides to a stop
+    rotationVelocity *= FRICTION;
+    targetRotation += rotationVelocity;
+    currentRotation += rotationVelocity;
+
+    // Once velocity is negligible, snap to nearest panel
+    if (Math.abs(rotationVelocity) < SNAP_THRESHOLD) {
+      isCoasting = false;
+      rotationVelocity = 0;
+      const snappedIndex = Math.round(-targetRotation / arcAngle);
+      targetRotation = -snappedIndex * arcAngle;
+      const normalizedIndex = ((snappedIndex % segments) + segments) % segments;
+      updateActiveSection(normalizedIndex);
+    }
+  }
+
+  // Smooth lerp to target for snapping / nav-button transitions
   const rotDiff = targetRotation - currentRotation;
-  if (Math.abs(rotDiff) > 0.00001) {
-    currentRotation += rotDiff * 0.08;
+  if (!isCoasting && Math.abs(rotDiff) > 0.00001) {
+    currentRotation += rotDiff * 0.10;
   }
   
   if (isEntranceAnimateDone) {
