@@ -473,11 +473,9 @@ function hideGlobalBack() {
   globalBackBtn._closeFn = null;
 }
 if (globalBackBtn) {
-  ['click', 'pointerdown', 'touchend'].forEach(evt => globalBackBtn.addEventListener(evt, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  bindActionButton(globalBackBtn, () => {
     if (typeof globalBackBtn._closeFn === 'function') globalBackBtn._closeFn();
-  }));
+  });
 }
 
 function closeHeroPage() {
@@ -610,26 +608,35 @@ function closeAllPages() {
   hideGlobalBack();
 }
 
-function bindAction(elem, actionFn) {
+// Universal Cross-Device Button Binding System (Mouse, Touch, Stylus, Hybrid)
+function bindActionButton(elem, actionFn) {
   if (!elem) return;
-  let lastTrigger = 0;
+  let lastExecTime = 0;
   const handler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const now = Date.now();
-    if (now - lastTrigger < 350) return;
-    lastTrigger = now;
+    if (e) {
+      if (e.cancelable && e.type !== 'click') {
+        e.preventDefault();
+      }
+      e.stopPropagation();
+    }
+    const now = performance.now();
+    if (now - lastExecTime < 280) return;
+    lastExecTime = now;
     actionFn(e);
   };
   elem.addEventListener('click', handler);
-  elem.addEventListener('touchend', handler);
+  elem.addEventListener('pointerup', (e) => {
+    if (e.isPrimary && (e.button === 0 || e.button === undefined)) {
+      handler(e);
+    }
+  });
 }
 
-bindAction(pillThumb, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
-bindAction(pillLabel, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
-bindAction(menuBtn, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
-modalCloseBtn.addEventListener('click', closeModal);
-modalCloseBackdrop.addEventListener('click', closeModal);
+bindActionButton(pillThumb, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+bindActionButton(pillLabel, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+bindActionButton(menuBtn, () => { if (isAnyPageOpen()) closeAllPages(); openModal(activeIndex); });
+bindActionButton(modalCloseBtn, closeModal);
+bindActionButton(modalCloseBackdrop, closeModal);
 
 const bottomBarEl = document.querySelector('.bottom-controls-bar');
 if (bottomBarEl) {
@@ -784,7 +791,7 @@ function toggleMode(e) {
   }
 }
 
-modeBtn?.addEventListener('click', toggleMode);
+bindActionButton(modeBtn, toggleMode);
 
 // Update UI state when active index shifts
 function updateActiveSection(index) {
@@ -843,7 +850,7 @@ function goToSection(index) {
   updateActiveSection(index);
 }
 
-bindAction(prevBtn, () => {
+bindActionButton(prevBtn, () => {
   const wasOpen = isAnyPageOpen();
   if (wasOpen) closeAllPages();
   targetRotation += arcAngle;
@@ -852,13 +859,49 @@ bindAction(prevBtn, () => {
   if (wasOpen) openModal(newIndex);
 });
 
-bindAction(nextBtn, () => {
+bindActionButton(nextBtn, () => {
   const wasOpen = isAnyPageOpen();
   if (wasOpen) closeAllPages();
   targetRotation -= arcAngle;
   const newIndex = (activeIndex + 1) % segments;
   updateActiveSection(newIndex);
   if (wasOpen) openModal(newIndex);
+});
+
+// Keyboard Shortcuts for Accessibility & Desktop Control
+window.addEventListener('keydown', (e) => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+  
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const wasOpen = isAnyPageOpen();
+    if (wasOpen) closeAllPages();
+    targetRotation += arcAngle;
+    const newIndex = (activeIndex - 1 + segments) % segments;
+    updateActiveSection(newIndex);
+    if (wasOpen) openModal(newIndex);
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    const wasOpen = isAnyPageOpen();
+    if (wasOpen) closeAllPages();
+    targetRotation -= arcAngle;
+    const newIndex = (activeIndex + 1) % segments;
+    updateActiveSection(newIndex);
+    if (wasOpen) openModal(newIndex);
+  } else if (e.key === 'm' || e.key === 'M') {
+    e.preventDefault();
+    toggleMode();
+  } else if (e.key === 'Escape') {
+    if (isAnyPageOpen()) {
+      e.preventDefault();
+      closeAllPages();
+    }
+  } else if (e.key === ' ' || e.key === 'Enter') {
+    if (!isAnyPageOpen()) {
+      e.preventDefault();
+      openModal(activeIndex);
+    }
+  }
 });
 
 // Animation Render Loop
